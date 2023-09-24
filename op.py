@@ -36,3 +36,20 @@ def config_op(args):
 def check_python_validation():
     return sh.check_python_version()
 
+
+class Operation:
+    def __init__(self, args) -> None:
+        self.args = args
+
+    def args_checker(func):
+        def wrapper_func(*args, **kwargs):
+            try:
+                result = func(*args, **kwargs)
+                return result
+            except Exception as e:
+                print(f'Error: {e}')
+        return wrapper_func
+
+
+    def create(self):
+        print(f'Creating item: {self.args.name}')

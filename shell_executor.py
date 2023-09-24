@@ -33,7 +33,12 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
 
     def check_python_version(self):
         try:
-            subprocess.run(['python', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            subprocess.run(
+                ["python", "--version"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
             return True
         except Exception:
             return False
