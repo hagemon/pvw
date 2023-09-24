@@ -35,3 +35,4 @@ def config_op(args):
 
 def check_python_validation():
     return sh.check_python_version()
+
