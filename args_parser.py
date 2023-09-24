@@ -1,5 +1,5 @@
 import argparse
-from op import create_op, remove_op, relocate_op, config_op, check_python_validation
+from op import Operation
 
 parser = argparse.ArgumentParser(description="Manage python venv environments")
 subparsers = parser.add_subparsers(help="Options to manage venvs", dest="command")
@@ -44,20 +44,30 @@ relocate_parser.add_argument(
     required=True,
 )
 
-try:
-    args = parser.parse_args()
-    if not check_python_validation():
-        print("Python not installed")
-    if args.command == "create":
-        create_op(args)
-    elif args.command == "remove":
-        remove_op(args)
-    elif args.command == "relocate":
-        relocate_op(args)
-    elif args.command == "config":
-        config_op(args)
-    else:
+
+def parse():
+    try:
+        args = parser.parse_args()
+        op = Operation(args)
+        if not op.check_python_validation():
+            print("Python not installed")
+            exit(1)
+        if args.command == "create":
+            op.create()
+        elif args.command == "remove":
+            op.remove()
+        elif args.command == "relocate":
+            op.relocate()
+        elif args.command == "config":
+            op.config()
+        elif args.command == "list":
+            op.list()
+        else:
+            parser.print_help()
+    except argparse.ArgumentError as e:
+        print(f"Error: {e}")
         parser.print_help()
-except argparse.ArgumentError as e:
-    print(f"Error: {e}")
-    parser.print_help()
+
+
+if __name__ == "__main__":
+    parse()

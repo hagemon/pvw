@@ -1,9 +1,7 @@
-import sys
-from shell_executor import sh
-from args_parser import args
+import args_parser
 
 def main():
-    pass
+    args_parser.parse()
 
 if __name__ == '__main__':
     main()
