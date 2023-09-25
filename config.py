@@ -24,9 +24,9 @@ class Config:
         try:
             with open(self.config_path) as f:
                 config = json.load(f)
-                path = config['venv_path']
-                if path.startswith('~/'):
-                    path = os.path.join(os.path.expanduser('~'), path[2:])
+                path = config["venv_path"]
+                if path.startswith("~/"):
+                    path = os.path.join(os.path.expanduser("~"), path[2:])
                 return path
         except Exception as e:
             print(e)
@@ -34,7 +34,7 @@ class Config:
     def build_venv_path(self):
         if not os.path.exists(self.venv_path):
             os.makedirs(self.venv_path)
-            print(f'create directory for venvs: {self.venv_path}')
+            print(f"create directory for venvs: {self.venv_path}")
 
 
 config = Config()

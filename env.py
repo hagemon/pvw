@@ -51,19 +51,30 @@ class EnvironmentManager:
         for i, column in enumerate(header):
             print(colored(f"{column:<{col_widths[i]}}", "green"), end=" ")
         print()
-        for row in env_list:
-            for i, cell in enumerate(row):
-                print(f"{cell:<{col_widths[i]}}", end=" ")
-            print()
+        if env_list:
+            for row in env_list:
+                for i, cell in enumerate(row):
+                    print(f"{cell:<{col_widths[i]}}", end=" ")
+                print()
+        else:
+            print("None")
 
     def check_python_version(self):
         return self.shell.check_python_version()
 
-    def check_duplicate(self, name):
+    def check_exists(self, name):
         return name in [e.name for e in self._envs]
 
     def create_environment(self, name):
-        if self.check_duplicate(name):
+        if self.check_exists(name):
             raise NameError(f"Environment named {name} has already exists.")
-        self.shell.create_env(name, config.venv_path)
+        path = os.path.join(config.venv_path, name)
+        print(f"creating {name} in {path}...")
+        self.shell.create_env(path)
         print(colored(f"{name} created successfully.", "green"))
+
+    def activate_environment(self, name):
+        if not self.check_exists(name):
+            raise NameError(f"No environment named {name}")
+        path = os.path.join(config.venv_path, name)
+        self.shell.activate_env(path)

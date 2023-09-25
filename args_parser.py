@@ -62,6 +62,8 @@ def parse():
             op.config()
         elif args.command == "list":
             op.list()
+        elif args.command == "activate":
+            op.activate()
         else:
             parser.print_help()
     except argparse.ArgumentError as e:

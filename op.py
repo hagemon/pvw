@@ -14,7 +14,7 @@ class Operation:
                 result = func(*args, **kwargs)
                 return result
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"Args Checker Error: {e}")
 
         return wrapper_func
 
@@ -25,7 +25,7 @@ class Operation:
                 result = func(*args, **kwargs)
                 return result
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"Venv Checker Error: {e}")
 
         return wrapper_func
 
@@ -50,15 +50,20 @@ class Operation:
         if self.args.dest:
             print(f"Relocating item {self.args.name} to {self.args.dest}")
 
-    # @args_checker
-    # @venv_checker
+    @args_checker
+    @venv_checker
     def list(self):
         self.env_manager.print_envs()
 
     @args_checker
     @venv_checker
     def activate(self):
-        print(f"activate venv {self.args.name}")
+        self.env_manager.activate_environment(self.args.name)
+
+    @args_checker
+    @venv_checker
+    def deactivate(self):
+        print(f"deactivate venv {self.args.name}")
 
     # Config Operation
     @args_checker
