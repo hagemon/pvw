@@ -2,11 +2,13 @@ import subprocess
 from termcolor import colored
 import sys
 import os
+import json
 
 
 class ShellExecutor:
     def __init__(self) -> None:
         self.on_win = sys.platform.startswith("win")
+        self.pipe_name = "_envs._cfg"
 
     @staticmethod
     def run(cmds: [str], shell=False):
@@ -42,6 +44,9 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             return True
         except Exception:
             return False
+        
+    def save_to_pipe(self, msg):
+        pass
 
     # Environments
     def create_env(self, path):
@@ -50,10 +55,11 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
     def activate_env(self, path):
         if self.on_win:
             script_path = os.path.join(path, "Scripts", "Activate.ps1")
-            print(script_path)
-            p = subprocess.Popen(script_path, stdout=sys.stdout)
         else:
             script_path = os.path.join(path, "bin", "activate")
-            self.run(f"source {script_path}", shell=True)
+
+        # Use file as a pipe to communicate with parent process.
+        with open(self.pipe_name, 'w') as f:
+            f.write(script_path)
 
 

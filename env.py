@@ -47,7 +47,7 @@ class EnvironmentManager:
     def print_envs(self):
         header = ["Name", "Path", "Size"]
         env_list = [e.to_list() for e in self._envs]
-        col_widths = [max(len(str(x)) for x in col) for col in zip(header, *env_list)]
+        col_widths = [max(len(str(x))+2 for x in col) for col in zip(header, *env_list)]
         for i, column in enumerate(header):
             print(colored(f"{column:<{col_widths[i]}}", "green"), end=" ")
         print()
