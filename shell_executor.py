@@ -2,7 +2,7 @@ import subprocess
 from termcolor import colored
 import sys
 import os
-import json
+import shutil
 
 
 class ShellExecutor:
@@ -38,7 +38,7 @@ class ShellExecutor:
 e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             )
 
-    def check_python_version(self):
+    def check_python_installation(self):
         try:
             self.run(["python", "--version"])
             return True
@@ -61,5 +61,8 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
         # Use file as a pipe to communicate with parent process.
         with open(self.pipe_name, 'w') as f:
             f.write(script_path)
+
+    def remove_env(self, path):
+        shutil.rmtree(path)
 
 

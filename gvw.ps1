@@ -1,9 +1,9 @@
 param(
-    [Parameter(ValueFromRemainingArguments=$true)]
+    [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$params
 )
 
-$PIPE_NAME= ".\_envs._cfg"
+$PIPE_NAME = ".\_envs._cfg"
 
 if ($params.Length -gt 0) {
     & "python" "main.py" $params

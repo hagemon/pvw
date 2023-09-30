@@ -28,26 +28,33 @@ class Environment:
 
 class EnvironmentManager:
     def __init__(self):
-        self._envs = self.load_envs()
+        self._envs = self.load()
         self.shell = ShellExecutor()
 
     @staticmethod
-    def load_envs():
+    def load():
         config.build_venv_path()
-        envs = []
+        envs = {}
         for env_name in os.listdir(config.venv_path):
             if env_name.startswith("."):
                 continue
             path = os.path.join(config.venv_path, env_name)
             size = "{:.2f}MB".format(_get_directory_size(path=path))
             env = Environment(env_name, path, size)
-            envs.append(env)
+            envs[env_name] = env
         return envs
 
-    def print_envs(self):
+    # Operations to show or check envs
+
+    def show(self, env=""):
         header = ["Name", "Path", "Size"]
-        env_list = [e.to_list() for e in self._envs]
-        col_widths = [max(len(str(x))+2 for x in col) for col in zip(header, *env_list)]
+        if env and self.exists(env):
+            env_list = [self._envs[env].to_list()]
+        else:
+            env_list = [self._envs[name].to_list() for name in self._envs]
+        col_widths = [
+            max(len(str(x)) + 2 for x in col) for col in zip(header, *env_list)
+        ]
         for i, column in enumerate(header):
             print(colored(f"{column:<{col_widths[i]}}", "green"), end=" ")
         print()
@@ -59,22 +66,40 @@ class EnvironmentManager:
         else:
             print("None")
 
-    def check_python_version(self):
-        return self.shell.check_python_version()
+    def check_python_installation(self):
+        return self.shell.check_python_installation()
 
-    def check_exists(self, name):
-        return name in [e.name for e in self._envs]
+    def exists(self, name):
+        return name in self._envs
 
-    def create_environment(self, name):
-        if self.check_exists(name):
+    # Operations to modify envs
+
+    def create(self, name):
+        if self.exists(name):
             raise NameError(f"Environment named {name} has already exists.")
         path = os.path.join(config.venv_path, name)
         print(f"creating {name} in {path}...")
         self.shell.create_env(path)
         print(colored(f"{name} created successfully.", "green"))
 
-    def activate_environment(self, name):
-        if not self.check_exists(name):
+    def activate(self, name):
+        if not self.exists(name):
             raise NameError(f"No environment named {name}")
         path = os.path.join(config.venv_path, name)
         self.shell.activate_env(path)
+
+    def remove(self, name):
+        if not self.exists(name):
+            raise NameError(f"Environment {name} does not exists.")
+        env = self._envs[name]
+        path = env.path
+        self.show(env=name)
+        confirm = input(colored(f"Sure to remove {name}? (Y/N)", "red"))
+        if confirm.lower() == "y":
+            self.shell.remove_env(path)
+
+    def copy(self, source, target):
+        pass
+
+    def move(self, source, target):
+        pass

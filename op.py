@@ -7,17 +7,6 @@ class Operation:
         self.args = args
         self.env_manager = EnvironmentManager()
 
-    # Wrapper
-    def args_checker(func):
-        def wrapper_func(*args, **kwargs):
-            try:
-                result = func(*args, **kwargs)
-                return result
-            except Exception as e:
-                print(f"Args Checker Error: {e}")
-
-        return wrapper_func
-
     def venv_checker(func):
         def wrapper_func(*args, **kwargs):
             try:
@@ -30,52 +19,52 @@ class Operation:
         return wrapper_func
 
     # Environment operation
-    @args_checker
     @venv_checker
     def create(self):
         name = self.args.name
-        self.env_manager.create_environment(name)
+        self.env_manager.create(name)
 
-    @args_checker
     @venv_checker
     def remove(self):
-        if self.args.force:
-            print(f"Removing item {self.args.name} (forced)")
-        else:
-            print(f"Removing item {self.args.name}")
+        name = self.args.name
+        self.env_manager.remove(name)
 
-    @args_checker
     @venv_checker
-    def relocate(self):
-        if self.args.dest:
-            print(f"Relocating item {self.args.name} to {self.args.dest}")
+    def copy(self):
+        source = self.args.source
+        target = self.args.target
+        self.env_manager.copy(source=source, target=target)
 
-    @args_checker
     @venv_checker
-    def list(self):
-        self.env_manager.print_envs()
+    def move(self):
+        source = self.args.source
+        target = self.args.target
+        self.env_manager.move(source=source, target=target)
 
-    @args_checker
+    @venv_checker
+    def show(self):
+        self.env_manager.show()
+
     @venv_checker
     def activate(self):
-        self.env_manager.activate_environment(self.args.name)
-
-    @args_checker
-    @venv_checker
-    def deactivate(self):
-        print(f"deactivate venv {self.args.name}")
+        self.env_manager.activate(self.args.name)
 
     # Config Operation
-    @args_checker
+    @venv_checker
     def config(self):
         if self.args.config_command == "set":
-            pass
+            print(self.args)
+            params = self.args.params[0]
+            sep = params.index("=")
+            key, value = params[:sep], params[sep + 1 :]
+            if key == "venv_path":
+                config.set(key, value)
+                print(config.config)
         elif self.args.config_command == "get":
-            pass
-        else:  # empty
-            config.edit()
-        print("config finished")
+            key = self.args.key
+            if key == "venv_path":
+                path = config.get(key)
+                print(path)
 
-    @args_checker
     def check_python_validation(self):
-        return self.env_manager.check_python_version()
+        return self.env_manager.check_python_installation()

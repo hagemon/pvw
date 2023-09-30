@@ -11,13 +11,28 @@ class Config:
             os.makedirs(config_dir)
         self.config_path = os.path.join(config_dir, "config.json")
         if not os.path.exists(self.config_path):
-            config = {"venv_path": "~/pvw"}
+            self.config = {"venv_path": "~/pvw"}
             with open(self.config_path, "w") as f:
-                json.dump(config, f)
+                json.dump(self.config, f)
+        else:
+            with open(self.config_path, 'r') as f:
+                self.config = json.load(f)
         self.shell = ShellExecutor()
 
     def edit(self):
         self.shell.edit_file(self.config_path)
+
+    def get(self, key):
+        try:
+            return self.config[key]
+        except KeyError:
+            print(f"No config option named {key}")
+
+    def set(self, key, value):
+        if key in self.config:
+            self.config[key] = value
+            with open(self.config_path, "w") as f:
+                json.dump(self.config, f)
 
     @property
     def venv_path(self):
