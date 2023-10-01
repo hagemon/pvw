@@ -20,6 +20,28 @@ Based on the built-in venv since python 3.6.
 
 ## Windows
 
+###  Build python executable file
+
+Using `pyinstaller` and `upx` to build a executable file, if you have not installed pyinstaller and upx, try
+
+```bash
+pip install pyinstaller
+```
+
+then download [upx](https://upx.github.io/) and decompress it into the path you want, e.g. `D:/upx`.
+
+Finally, build the executable file for python script:
+
+```bash
+pyinstaller --onefile --upx-dir=D:/upx main.py --distpath . -n pvw
+```
+
+### Build powershell executable file
+
+### Add pvw to environment variable
+
+
+
 ## MacOS / Linux
 
 # Architecture
