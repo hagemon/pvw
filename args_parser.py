@@ -5,7 +5,8 @@ parser = argparse.ArgumentParser(description="Manage python venv environments")
 subparsers = parser.add_subparsers(help="Options to manage venvs", dest="command")
 
 # list
-list_parser = subparsers.add_parser("ls", help="List all environment.")
+list_parser = subparsers.add_parser("ls", help="List all venvs.")
+list_parser.add_argument('--show-size', action='store_true', help='show sizes of each venv')
 
 # config
 config_parser = subparsers.add_parser("config", help="Get or set pvw config")

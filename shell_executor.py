@@ -2,7 +2,7 @@ import subprocess
 from termcolor import colored
 import sys
 import os
-import shutil
+import shutil 
 
 
 class ShellExecutor:
@@ -44,7 +44,7 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             return True
         except Exception:
             return False
-        
+
     def save_to_pipe(self, msg):
         pass
 
@@ -59,10 +59,30 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             script_path = os.path.join(path, "bin", "activate")
 
         # Use file as a pipe to communicate with parent process.
-        with open(self.pipe_name, 'w') as f:
+        with open(self.pipe_name, "w") as f:
             f.write(script_path)
 
     def remove_env(self, path):
         shutil.rmtree(path)
 
+    def replace_path(self, file_rel_path, source_path, target_path):
+        content = ""
+        source_prompt = f"({os.path.basename(source_path)})"
+        target_prompt = f"({os.path.basename(target_path)})"
+        with open(os.path.join(source_path, file_rel_path), "r") as f:
+            content = (
+                f.read()
+                .replace(source_path, target_path)
+                .replace(source_prompt, target_prompt)
+            )
+            with open(os.path.join(target_path, file_rel_path), "w") as f:
+                f.write(content)
 
+    def copy_env(self, source_path, target_path):
+        self.create_env(target_path)
+        shutil.copytree(source_path, target_path, ignore=shutil.ignore_patterns("python*.exe", "pip*.exe"), dirs_exist_ok=True)
+        self.replace_path("pyvenv.cfg", source_path, target_path)
+        self.replace_path(os.path.join("Scripts", "activate"), source_path, target_path)
+        self.replace_path(
+            os.path.join("Scripts", "activate.bat"), source_path, target_path
+        )

@@ -3,9 +3,13 @@ from env import EnvironmentManager
 
 
 class Operation:
+    """
+    Parse args from command line, and feed them into EnvironmentManager to manage venv information.
+    """
     def __init__(self, args) -> None:
         self.args = args
-        self.env_manager = EnvironmentManager()
+        parse_size = True if "show_size" in args and args.show_size else False
+        self.env_manager = EnvironmentManager(parse_size=parse_size)
 
     def venv_checker(func):
         def wrapper_func(*args, **kwargs):
@@ -35,7 +39,7 @@ class Operation:
         target = self.args.target
         self.env_manager.copy(source=source, target=target)
 
-    @venv_checker
+    # @venv_checker
     def move(self):
         source = self.args.source
         target = self.args.target
@@ -53,7 +57,6 @@ class Operation:
     @venv_checker
     def config(self):
         if self.args.config_command == "set":
-            print(self.args)
             params = self.args.params[0]
             sep = params.index("=")
             key, value = params[:sep], params[sep + 1 :]
