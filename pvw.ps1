@@ -6,8 +6,9 @@ param(
 $PIPE_NAME = ".\_envs._cfg"
 
 if ($params.Length -gt 0) {
-    # & "python" "-m" "cProfile" "-s" "time" "main.py" $params
-    & "python" "main.py" $params
+    # & "python" "-m" "cProfile" "-s" "time" "main.py" $params # for evaluating execution time
+    # & "python" "main.py" $params
+    & .\pvw_py.exe $params
     if (($params[0] -eq "activate") -and (Test-Path $PIPE_NAME)) {
         # activate parameter will create a _envs._cfg file as a pipe to make communication between parent/child process.
         $ps1Path = Get-Content "_envs._cfg"

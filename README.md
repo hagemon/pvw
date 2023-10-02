@@ -4,23 +4,23 @@ A lightweight python venv wrapper for virtual environment management.
 
 Based on the built-in venv since python 3.6.
 
-# Installation
+## Installation
 
-## Windows
+### Windows
 
-## MacOS / Linux
+### MacOS / Linux
 
-# Usage
+## Usage
 
-## Windows
+### Add environment variable
 
-## MacOS / Linux
+For Windows, you may firstly add the directory to PATH.
 
-# Build From Source
+## Build From Source
 
-## Windows
+### Windows
 
-###  Build python executable file
+####  Build python executable file
 
 Using `pyinstaller` and `upx` to build a executable file, if you have not installed pyinstaller and upx, try
 
@@ -33,17 +33,15 @@ then download [upx](https://upx.github.io/) and decompress it into the path you 
 Finally, build the executable file for python script:
 
 ```bash
-pyinstaller --onefile --upx-dir=D:/upx main.py --distpath . -n pvw
+pyinstaller --onefile --upx-dir=D:/upx main.py --distpath . -n pvw_py
 ```
 
-### Build powershell executable file
+#### Build powershell executable file
 
-### Add pvw to environment variable
+#### Add pvw to environment variable
 
+### MacOS / Linux
 
-
-## MacOS / Linux
-
-# Architecture
+## Architecture
 
 To Be Continued...
