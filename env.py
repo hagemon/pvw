@@ -66,9 +66,11 @@ class EnvironmentManager:
         col_widths = [
             max(len(str(x)) + 2 for x in col) for col in zip(header, *env_list)
         ]
+        print()
         for i, column in enumerate(header):
             print(colored(f"{column:<{col_widths[i]}}", "green"), end=" ")
         print()
+        print(colored("-"*sum(col_widths), 'green'))
         if env_list:
             for row in env_list:
                 for i, cell in enumerate(row):
@@ -76,6 +78,7 @@ class EnvironmentManager:
                 print()
         else:
             print("None")
+        print()
 
     def check_python_installation(self):
         return self.shell.check_python_installation()
