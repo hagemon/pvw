@@ -22,7 +22,7 @@ jobs:
         choco install upx
         
         # Build executable
-        pyinstaller -n pvw_py --onefile main.py
+        pyinstaller -n pvw_py --onefile --distpath . main.py
         upx pvw_py.exe
 
     - name: Install upx and shc for macOS
@@ -46,7 +46,7 @@ jobs:
         pip install pyinstaller
         
         # Build executable
-        pyinstaller -n pvw_py main.py --onefile
+        pyinstaller --onefile main.py --distpath . -n pvw_py
         upx pvw_py
 
     - name: Build Windows ps1 to exe
@@ -75,10 +75,11 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
       run: |
         # Create archive
-        if [[ "${{ matrix.os }}" == "macOS-latest" ]] || [[ "${{ matrix.os }}" == "macOS-11.0" ]]; then
+        if [[ "${{ matrix.os }}" == "macOS-latest" ]] then
           # macOS arm
           tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw_sh
+        elif [[ "${{ matrix.os }}" == "macOS-11.0" ]] then
+          tar -czvf pvw_macOS_intel.tar.gz pvw_py pvw_sh
         else
-          # macOS intel & Linux
           tar -czvf pvw_linux.tar.gz pvw_py pvw_sh
         fi
