@@ -1,0 +1,84 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macOS-latest, macOS-11.0]
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build Windows exe
+      if: startsWith(matrix.os, 'windows')
+      env:
+        UPX_PATH: C:\upx\upx.exe
+      run: |
+        # Install PyInstaller and upx
+        pip install pyinstaller
+        choco install upx
+        
+        # Build executable
+        pyinstaller -n pvw_py --onefile main.py
+        upx pvw_py.exe
+
+    - name: Install upx and shc for macOS
+      if: startsWith(matrix.os, 'macOS')
+      run: |
+        brew install shc
+        brew install upx
+
+    - name: Install upx and shc for Ubuntu
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y upx-ucl shc
+
+    - name: Build Linux and macOS exe
+      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+      env:
+        UPX_PATH: /usr/local/bin/upx
+      run: |
+        # Install PyInstaller and upx
+        pip install pyinstaller
+        
+        # Build executable
+        pyinstaller -n pvw_py main.py --onefile
+        upx pvw_py
+
+    - name: Build Windows ps1 to exe
+      if: startsWith(matrix.os, 'windows')
+      shell: powershell
+      run: |
+        # install ps2exe
+        Invoke-Module ps2exe
+        ps2exe pvw.ps1 pvw.exe
+
+    - name: Build Linux/macOS sh to exe
+      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+      run: |      
+        # Build executable
+        shc -f pvw.sh -o pvw
+
+    - name: Create archive for Windows
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        # Install zip
+        choco install zip
+        # Create zip archive
+        zip -r pvw_win.zip pvw_py.exe pvw_ps1.exe
+
+    - name: Create archive for Linux and macOS
+      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+      run: |
+        # Create archive
+        if [[ "${{ matrix.os }}" == "macOS-latest" ]] || [[ "${{ matrix.os }}" == "macOS-11.0" ]]; then
+          # macOS arm
+          tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw_sh
+        else
+          # macOS intel & Linux
+          tar -czvf pvw_linux.tar.gz pvw_py pvw_sh
+        fi
