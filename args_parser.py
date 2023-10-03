@@ -49,9 +49,6 @@ def parse():
     try:
         args = parser.parse_args()
         op = Operation(args)
-        if not op.check_python_validation():
-            print("Python not installed")
-            exit(1)
         if args.command == "create":
             op.create()
         elif args.command == "remove":

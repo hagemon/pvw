@@ -1,6 +1,5 @@
 from config import config
 import os
-from termcolor import colored
 from shell_executor import ShellExecutor
 
 
@@ -49,7 +48,7 @@ class EnvironmentManager:
         env_list = [e.to_list() for e in self._envs]
         col_widths = [max(len(str(x)) for x in col) for col in zip(header, *env_list)]
         for i, column in enumerate(header):
-            print(colored(f"{column:<{col_widths[i]}}", "green"), end=" ")
+            print(f"{column:<{col_widths[i]}}", end=" ")
         print()
         if env_list:
             for row in env_list:
@@ -71,7 +70,7 @@ class EnvironmentManager:
         path = os.path.join(config.venv_path, name)
         print(f"creating {name} in {path}...")
         self.shell.create_env(path)
-        print(colored(f"{name} created successfully.", "green"))
+        print(f"{name} created successfully.")
 
     def activate_environment(self, name):
         if not self.check_exists(name):
