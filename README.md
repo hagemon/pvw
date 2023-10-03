@@ -6,30 +6,19 @@ Based on the built-in venv since python 3.6.
 
 ## Installation
 
+### MacOS 
+
+### Linux
+
 ### Windows
 
 As we have not gained a proper way to sign my application (which may be improved soon), we provide `.zip` file for Windows users.'
 
-1. Download `pvw.zip` in [releases](https://github.com/hagemon/pvw/releases) page.
+1. Download `pvw_win.zip` in [releases](https://github.com/hagemon/pvw/releases) page.
 2. Unzip it into a path, e.g. `D:\pvw`.
 3. Add the path `D:\pvw` to environment variable `PATH`.
 
-### MacOS / Linux
-
 ## Usage
-
-### Pre-requirement (for Windows)
-
-For Windows, you may:
-
-1. Add the directory of `pvw` to PATH if you build from source.
-2. Open Powershell in **Administration Mode** and input:
-
-    ```powershell
-    set-ExecutionPolicy RemoteSigned
-    ```
-
-### Commands
 
 ```
 pvw [-h] {ls,config,activate,create,rm,mv,cp}
@@ -87,7 +76,7 @@ pvw create env_name
 Activate an existing venv:
 
 ```
-pvw activate env1
+pvw activate st
 ```
 
 To deactivate current venv, just type `deactivate` inside environment. E.g. in Windows
@@ -135,25 +124,52 @@ Using `pyinstaller` and `upx` to build a executable file, if you have not instal
 pip install pyinstaller
 ```
 
-then download [upx](https://upx.github.io/) and decompress it into the path you want, e.g. `D:/upx`.
+#### For Windows
+
+Download [upx](https://upx.github.io/) and decompress it into the path you want, e.g. `D:/upx`.
 
 Finally, build the executable file for python script:
 
 ```bash
-pyinstaller --onefile --upx-dir=D:/upx main.py --distpath . -n pvw_py
+pyinstaller --onefile --upx-dir=D:/upx main.py --distpath ./dist/win -n pvw_py
+```
+
+#### For MacOS / Linux
+
+use `apt` or `homebrew` to install `upx`, then `pyinstaller` should automatically detect the path of `upx`
+
+```bash
+pyinstaller --onefile main.py --distpath ./dist/macOS -n pvw_py
 ```
 
 Hint: the name `pvw_py` should not be modified, or you can custom this name by also editing the `pvw.ps1` script.
 
-### For Windows
+### Build shell executable file
 
-#### Add pvw to environment variable 
+#### For Windows
 
-Move `pvw.ps1` and `pvw_py.exe` into the pvw path, e.g. `D:/pvw`
+Use [ps2exe](https://github.com/MScholtes/PS2EXE) to build `pvw.ps1` to `pvw.exe`
+
+```powershell
+mkdir -ErrorAction Ignore .\dist\win
+ps2exe .\pvw.ps1 .\dist\win\pvw.exe
+```
+Note that `ps2exe` should be ran in powershell 5, then used in powershell core (powershell 7).
+
+#### For MacOS
+
+Use `shc` to build `pvw.sh` to `pvw`
+
+```bash
+mkdir -p dist/macOS ; shc -f pvw.sh -o ./dist/macOS/pvw
+```
+
+### Add pvw to environment variable (Windows)
+
+Move `pvw.exe` and `pvw_py.exe` into the pvw path, e.g. `D:/pvw`
 
 add `D:/pvw` to environment variable `PATH`
 
-### For MacOS / Linux
 
 ## Architecture
 

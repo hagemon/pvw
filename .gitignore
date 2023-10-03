@@ -167,3 +167,4 @@ config/*
 *.exe
 .vscode
 *.pfx
+*.x.c

@@ -7,7 +7,6 @@ $PIPE_NAME = ".\_envs._cfg"
 
 if ($params.Length -gt 0) {
     # & "python" "-m" "cProfile" "-s" "time" "main.py" $params # for evaluating execution time
-    # & "python" "main.py" $params
     & pvw_py $params
     if (($params[0] -eq "activate") -and (Test-Path $PIPE_NAME)) {
         # activate parameter will create a _envs._cfg file as a pipe to make communication between parent/child process.
@@ -17,7 +16,6 @@ if ($params.Length -gt 0) {
     }
 }
 else {
-    # & "python" "main.py"
     & pvw_py
 }
 

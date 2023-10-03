@@ -7,7 +7,7 @@ import shutil
 class ShellExecutor:
     def __init__(self) -> None:
         self.on_win = sys.platform.startswith("win")
-        self.py = self.check_python_version()
+        self.py = self.check_python_installation()
         self.pipe_name = "_envs._cfg"
 
     @staticmethod
