@@ -69,7 +69,7 @@ jobs:
         # Install zip
         choco install zip
         # Create zip archive
-        zip -r pvw_win.zip pvw_py.exe pvw_ps1.exe
+        zip -r pvw_win.zip pvw_py.exe pvw.exe
 
     - name: Create archive for Linux and macOS
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
@@ -77,9 +77,9 @@ jobs:
         # Create archive
         if [[ "${{ matrix.os }}" == "macOS-latest" ]]; then
           # macOS arm
-          tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw_sh
+          tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw
         elif [[ "${{ matrix.os }}" == "macOS-11.0" ]]; then
-          tar -czvf pvw_macOS_intel.tar.gz pvw_py pvw_sh
+          tar -czvf pvw_macOS_intel.tar.gz pvw_py pvw
         else
-          tar -czvf pvw_linux.tar.gz pvw_py pvw_sh
+          tar -czvf pvw_linux.tar.gz pvw_py pvw
         fi
