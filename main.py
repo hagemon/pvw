@@ -1,9 +1,9 @@
-import args_parser
+from args_parser import parse
+
 
 def main():
-    args_parser.parse()
+    parse()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-
-

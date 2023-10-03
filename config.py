@@ -1,23 +1,47 @@
 import os
 import json
+import sys
 from shell_executor import ShellExecutor
 
 
 class Config:
     def __init__(self):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        config_dir = os.path.join(script_dir, "config")
+        if getattr(sys, "frozen", False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+        config_dir = os.path.join(application_path, "config")
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
         self.config_path = os.path.join(config_dir, "config.json")
         if not os.path.exists(self.config_path):
-            config = {"venv_path": "~/pvw"}
-            with open(self.config_path, "w") as f:
-                json.dump(config, f)
+            path = self.ask_for_init()
+            self.config = {"venv_path": path}
+            try:
+                with open(self.config_path, "w") as f:
+                    json.dump(self.config, f)
+                    print(f"Create config file in {self.config_path}")
+            except Exception as e:
+                raise NameError(f"invalid venv path {path}.")
+        else:
+            with open(self.config_path, "r") as f:
+                self.config = json.load(f)
         self.shell = ShellExecutor()
 
     def edit(self):
         self.shell.edit_file(self.config_path)
+
+    def get(self, key):
+        try:
+            return self.config[key]
+        except KeyError:
+            print(f"No config option named {key}")
+
+    def set(self, key, value):
+        if key in self.config:
+            self.config[key] = value
+            with open(self.config_path, "w") as f:
+                json.dump(self.config, f)
 
     @property
     def venv_path(self):
@@ -36,5 +60,16 @@ class Config:
             os.makedirs(self.venv_path)
             print(f"create directory for venvs: {self.venv_path}")
 
+    def ask_for_init(self):
+        path = input("Set the directory for venv (~/venvs):")
+        if not path:
+            path = "~/venvs"
+        if path.startswith("~/"):
+            path = os.path.join(os.path.expanduser("~"), path[2:])
+        return path
 
-config = Config()
+
+try:
+    config = Config()
+except Exception:
+    raise InterruptedError("Config initialized interrupted.")

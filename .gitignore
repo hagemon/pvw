@@ -161,3 +161,9 @@ cython_debug/
 
 # Mac OS
 .DS_Store
+
+# custom
+config/*
+*.exe
+.vscode
+*.pfx

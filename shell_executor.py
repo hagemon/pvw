@@ -1,12 +1,14 @@
 import subprocess
 import sys
 import os
+import shutil
 
 
 class ShellExecutor:
     def __init__(self) -> None:
         self.on_win = sys.platform.startswith("win")
         self.py = self.check_python_version()
+        self.pipe_name = "_envs._cfg"
 
     @staticmethod
     def run(cmds: [str], shell=False):
@@ -36,7 +38,7 @@ class ShellExecutor:
 e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             )
 
-    def check_python_version(self):
+    def check_python_installation(self):
         try:
             self.run(["python", "--version"])
             return "python"
@@ -47,6 +49,9 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
             except Exception:
                 raise NameError("python or python3 is not detected.")
 
+    def save_to_pipe(self, msg):
+        pass
+
     # Environments
     def create_env(self, path):
         self.run(f"{self.py} -m venv {path}", shell=True)
@@ -54,11 +59,38 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
     def activate_env(self, path):
         if self.on_win:
             script_path = os.path.join(path, "Scripts", "Activate.ps1")
-            print(script_path)
-            p = subprocess.Popen(script_path, stdout=sys.stdout)
         else:
             script_path = os.path.join(path, "bin", "activate")
-            print(script_path)
-            # self.run(f"source {script_path}", shell=True)
-            # subprocess.Popen(f"source {script_path}", shell=True)
-            self.run(["./activate_xnix.sh", script_path], shell=True)
+        # Use file as a pipe to communicate with parent process.
+        with open(self.pipe_name, "w") as f:
+            f.write(script_path)
+
+    def remove_env(self, path):
+        shutil.rmtree(path)
+
+    def replace_path(self, file_rel_path, source_path, target_path):
+        content = ""
+        source_prompt = f"({os.path.basename(source_path)})"
+        target_prompt = f"({os.path.basename(target_path)})"
+        with open(os.path.join(source_path, file_rel_path), "r") as f:
+            content = (
+                f.read()
+                .replace(source_path, target_path)
+                .replace(source_prompt, target_prompt)
+            )
+            with open(os.path.join(target_path, file_rel_path), "w") as f:
+                f.write(content)
+
+    def copy_env(self, source_path, target_path):
+        self.create_env(target_path)
+        shutil.copytree(
+            source_path,
+            target_path,
+            ignore=shutil.ignore_patterns("python*.exe", "pip*.exe"),
+            dirs_exist_ok=True,
+        )
+        self.replace_path("pyvenv.cfg", source_path, target_path)
+        self.replace_path(os.path.join("Scripts", "activate"), source_path, target_path)
+        self.replace_path(
+            os.path.join("Scripts", "activate.bat"), source_path, target_path
+        )
