@@ -1,12 +1,16 @@
 import os
 import json
+import sys
 from shell_executor import ShellExecutor
 
 
 class Config:
     def __init__(self):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        config_dir = os.path.join(script_dir, "config")
+        if getattr(sys, "frozen", False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+        config_dir = os.path.join(application_path, "config")
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
         self.config_path = os.path.join(config_dir, "config.json")
@@ -16,6 +20,7 @@ class Config:
             try:
                 with open(self.config_path, "w") as f:
                     json.dump(self.config, f)
+                    print(f"Create config file in {self.config_path}")
             except Exception as e:
                 raise NameError(f"invalid venv path {path}.")
         else:
@@ -64,4 +69,7 @@ class Config:
         return path
 
 
-config = Config()
+try:
+    config = Config()
+except Exception:
+    raise InterruptedError("Config initialized interrupted.")
