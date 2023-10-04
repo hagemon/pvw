@@ -100,6 +100,16 @@ jobs:
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Get os prefix
+      id: get_os_prefix
+      uses: actions/github-script@0.9.0
+      with:
+        script: |
+          const os = "${{ matrix.os }}".split('-')[0]
+          const suffix = "${{ matrix.os }}".startswith("win") ? "zip" : "tar.gz"
+          core.setOutput('os', os)
+          core.setOutput('suffix', suffix)
+
     - name: Upload Assets for Windows
       uses: actions/upload-release-asset@v1
       if: startsWith(matrix.os, 'windows')
@@ -119,5 +129,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: pvw.tar.gz
-        asset_name: pvw_$(echo "${{ matrix.os }}" | awk -F'-' '{print $1}')_${{ matrix.arch }}.tar.gz
+        asset_name: pvw_${{ steps.get_os_prefix.outputs.os }}_${{ matrix.arch }}.tar.gz
         asset_content_type: application/octet-stream
