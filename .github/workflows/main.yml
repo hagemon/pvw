@@ -8,6 +8,10 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macOS-latest, macOS-11.0]
+        arch: [amd64, arm64]
+        exclude:
+          - os: windows-latest
+            arch: arm64
     
     steps:
     - uses: actions/checkout@v2
@@ -74,12 +78,17 @@ jobs:
     - name: Create archive for Linux and macOS
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
       run: |
-        # Create archive
         if [[ "${{ matrix.os }}" == "macOS-latest" ]]; then
-          # macOS arm
-          tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw
-        elif [[ "${{ matrix.os }}" == "macOS-11.0" ]]; then
-          tar -czvf pvw_macOS_intel.tar.gz pvw_py pvw
+          if [[ "${{ matrix.arch }}" == "amd64" ]]; then
+            tar -czvf pvw_macOS_x64.tar.gz pvw_py pvw
+          else
+            tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw
+          fi
         else
-          tar -czvf pvw_linux.tar.gz pvw_py pvw
+          # Linux
+          if [[ "${{ matrix.arch }}" == "amd64" ]]; then
+            tar -czvf pvw_linux_x64.tar.gz pvw_py pvw
+          else
+            tar -czvf pvw_linux_arm.tar.gz pvw_py pvw
+          fi
         fi
