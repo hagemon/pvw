@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macOS-latest, macOS-11.0]
+        os: [windows-latest, ubuntu-latest, macOS-latest]
         arch: [amd64, arm64]
         exclude:
           - os: windows-latest
@@ -16,10 +16,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
     - name: Build Windows exe
       if: startsWith(matrix.os, 'windows')
       env:
         UPX_PATH: C:\upx\upx.exe
+      
       run: |
         # Install PyInstaller and upx
         pip install pyinstaller
@@ -47,7 +53,7 @@ jobs:
         UPX_PATH: /usr/local/bin/upx
       run: |
         # Install PyInstaller and upx
-        pip install pyinstaller
+        pip3 install pyinstaller
         
         # Build executable
         pyinstaller --onefile main.py --distpath . -n pvw_py
