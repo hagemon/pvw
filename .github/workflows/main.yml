@@ -97,7 +97,7 @@ jobs:
       with:
         tag: v0.0.2 # Replace with your program's version number
         allowUpdates: true
-        commit: Release v0.0.2 # Replace with your release name
+        commit: main
         body: |
           Release v0.0.2
         draft: false
