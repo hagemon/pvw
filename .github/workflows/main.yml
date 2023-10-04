@@ -116,10 +116,8 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run:
-        prefix=$(echo ${{ matrix.os }} | awk -F'-' '{print $1}')
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: pvw.tar.gz
-        asset_name: pvw_${{ prefix }}_${{ matrix.arch }}.tar.gz
+        asset_name: pvw_$(echo "${{ matrix.os }}" | awk -F'-' '{print $1}')_${{ matrix.arch }}.tar.gz
         asset_content_type: application/octet-stream
