@@ -66,9 +66,9 @@ jobs:
       shell: powershell
       run: |
         # install ps2exe
-        Install-Module ps2exe
-        Import-Module ps2exe
-        ps2exe pvw.ps1 pvw.exe
+        Install-Module ps2exe -RunAsAdmin
+        Import-Module ps2exe -RunAsAdmin
+        ps2exe pvw.ps1 pvw.exe -RunAsAdmin
 
     - name: Build Linux/macOS sh to exe
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
