@@ -33,7 +33,6 @@ jobs:
         
         # Build executable
         pyinstaller -n pvw_py --onefile --distpath . main.py
-        upx pvw_py.exe
 
     - name: Install upx and shc for macOS
       if: startsWith(matrix.os, 'macOS')
@@ -57,7 +56,6 @@ jobs:
         
         # Build executable
         pyinstaller --onefile main.py --distpath . -n pvw_py
-        upx pvw_py
 
     - name: Build Windows ps1 to exe
       if: startsWith(matrix.os, 'windows')

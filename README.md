@@ -126,12 +126,10 @@ pip install pyinstaller
 
 #### For Windows
 
-Download [upx](https://upx.github.io/) and decompress it into the path you want, e.g. `D:/upx`.
-
-Finally, build the executable file for python script:
+Download [upx](https://upx.github.io/) and add it to PATH, then build the executable file for python script:
 
 ```bash
-pyinstaller --onefile --upx-dir=D:/upx main.py --distpath ./dist/win -n pvw_py
+pyinstaller --onefile main.py --distpath ./dist/win -n pvw_py
 ```
 
 #### For MacOS / Linux
