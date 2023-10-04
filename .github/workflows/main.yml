@@ -104,24 +104,24 @@ jobs:
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload Assets
+    - name: Upload Assets for Windows
       uses: actions/upload-release-asset@v1
+      if: startsWith(matrix.os, 'windows')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: |
-          # Upload the correct file based on the operating system and architecture
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo pvw.zip
-          else
-            echo pvw.tar.gz
-          fi
-        asset_name: |
-          # Set the asset name based on the operating system and architecture
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            echo pvw_windows_${{ matrix.arch }}.zip
-          else
-            echo pvw_${{ matrix.os }}_${{ matrix.arch }}.tar.gz
-          fi
+        asset_path: pvw.zip
+        asset_name: pvw_windows_${{ matrix.arch }}.zip
+        asset_content_type: application/octet-stream
+
+    - name: Upload Assets for *nix
+      uses: actions/upload-release-asset@v1
+      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: pvw.tar.gz
+        asset_name: echo pvw_${{ matrix.os }}_${{ matrix.arch }}.tar.gz
         asset_content_type: application/octet-stream
