@@ -7,11 +7,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macOS-latest]
-        arch: [amd64, arm64]
-        exclude:
-          - os: windows-latest
-            arch: arm64
+        # os: [windows-latest, ubuntu-latest, macOS-latest]
+        # arch: [amd64, arm64]
+        # exclude:
+        #   - os: windows-latest
+        #     arch: arm64
+        # os: [ubuntu-latest]
+        # arch: [amd64, arm64]
+        os: [windows-latest]
+        arch: [amd64]
     
     steps:
     - uses: actions/checkout@v2
@@ -63,6 +67,7 @@ jobs:
       run: |
         # install ps2exe
         Install-Module ps2exe
+        Import-Module ps2exe
         ps2exe pvw.ps1 pvw.exe
 
     - name: Build Linux/macOS sh to exe
@@ -77,22 +82,44 @@ jobs:
         # Install zip
         choco install zip
         # Create zip archive
-        zip -r pvw_win.zip pvw_py.exe pvw.exe
+        zip -r pvw.zip pvw_py.exe pvw.exe
 
     - name: Create archive for Linux and macOS
       if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
       run: |
-        if [[ "${{ matrix.os }}" == "macOS-latest" ]]; then
-          if [[ "${{ matrix.arch }}" == "amd64" ]]; then
-            tar -czvf pvw_macOS_x64.tar.gz pvw_py pvw
-          else
-            tar -czvf pvw_macOS_arm.tar.gz pvw_py pvw
-          fi
-        else
-          # Linux
-          if [[ "${{ matrix.arch }}" == "amd64" ]]; then
-            tar -czvf pvw_linux_x64.tar.gz pvw_py pvw
-          else
-            tar -czvf pvw_linux_arm.tar.gz pvw_py pvw
-          fi
-        fi
+        tar -czvf pvw.tar.gz pvw_py pvw
+
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: v0.0.2 # Replace with your program's version number
+    #     release_name: Release v0.0.2 # Replace with your release name
+    #     body: |
+    #       Release v0.0.2
+    #     draft: false
+    #     prerelease: false
+
+    # - name: Upload Assets
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: |
+    #       # Upload the correct file based on the operating system and architecture
+    #       if [ "${{ matrix.os }}" = "windows-latest" ]; then
+    #         echo pvw.zip
+    #       else
+    #         echo pvw.tar.gz
+    #       fi
+    #     asset_name: |
+    #       # Set the asset name based on the operating system and architecture
+    #       if [ "${{ matrix.os }}" = "windows-latest" ]; then
+    #         echo pvw_windows_${{ matrix.arch }}.zip
+    #       else
+    #         echo pvw_${{ matrix.os }}_${{ matrix.arch }}.tar.gz
+    #       fi
+    #     asset_content_type: application/octet-stream
