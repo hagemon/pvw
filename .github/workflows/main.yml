@@ -95,9 +95,9 @@ jobs:
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        tag_name: v0.0.2 # Replace with your program's version number
+        tag: v0.0.2 # Replace with your program's version number
         allowUpdates: true
-        release_name: Release v0.0.2 # Replace with your release name
+        commit: Release v0.0.2 # Replace with your release name
         body: |
           Release v0.0.2
         draft: false
