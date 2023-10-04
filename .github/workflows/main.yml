@@ -111,14 +111,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
           # Upload the correct file based on the operating system and architecture
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
             echo pvw.zip
           else
             echo pvw.tar.gz
           fi
         asset_name: |
           # Set the asset name based on the operating system and architecture
-          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
             echo pvw_windows_${{ matrix.arch }}.zip
           else
             echo pvw_${{ matrix.os }}_${{ matrix.arch }}.tar.gz
