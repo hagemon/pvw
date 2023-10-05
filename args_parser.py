@@ -2,6 +2,11 @@ import argparse
 from op import Operation
 
 parser = argparse.ArgumentParser(description="Manage python venv environments")
+parser.add_argument(
+    "-v", "--version",
+    action="version",
+    version="pvw version 0.0.1"
+)
 subparsers = parser.add_subparsers(dest="command")
 
 # list
@@ -49,6 +54,8 @@ move_parser.add_argument("target", help="Name of target venv.")
 copy_parser = subparsers.add_parser("cp", help="Copy venv.")
 copy_parser.add_argument("source", help="Name of source venv.")
 copy_parser.add_argument("target", help="Name of target venv.")
+
+
 
 
 def parse():

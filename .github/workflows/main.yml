@@ -25,6 +25,20 @@ jobs:
       with:
         python-version: 3.11
 
+    - name: Get os prefix
+      id: get_os_prefix
+      uses: actions/github-script@v6
+      with:
+        script: |
+          var os = "${{ matrix.os }}".split('-')[0]
+          if (os == "ubuntu") {
+            os = "linux"
+          }
+          const suffix = "${{ matrix.os }}".startsWith("win") ? "zip" : "tar.gz"
+          core.setOutput('os', os)
+          core.setOutput('suffix', suffix)
+          core.setOutput('version', '0.0.1')
+
     - name: Build Windows exe
       if: startsWith(matrix.os, 'windows')
       env:
@@ -93,27 +107,14 @@ jobs:
       id: create_release
       uses: ncipollo/release-action@v1
       with:
-        tag: v0.0.1 # Replace with your program's version number
+        tag: v${{ steps.get_os_prefix.outputs.version }}
         allowUpdates: true
         commit: main
         body: |
-          Release v0.0.1
+          Release v${{ steps.get_os_prefix.outputs.version }}
         draft: false
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Get os prefix
-      id: get_os_prefix
-      uses: actions/github-script@v6
-      with:
-        script: |
-          var os = "${{ matrix.os }}".split('-')[0]
-          if (os == "ubuntu") {
-            os = "linux"
-          }
-          const suffix = "${{ matrix.os }}".startsWith("win") ? "zip" : "tar.gz"
-          core.setOutput('os', os)
-          core.setOutput('suffix', suffix)
 
     - name: Upload Assets
       uses: actions/upload-release-asset@v1
@@ -122,5 +123,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: pvw.${{ steps.get_os_prefix.outputs.suffix }}
-        asset_name: pvw_${{ steps.get_os_prefix.outputs.os }}_${{ matrix.arch }}.${{ steps.get_os_prefix.outputs.suffix }}
+        asset_name: pvw_${{ steps.get_os_prefix.outputs.version }}_${{ steps.get_os_prefix.outputs.os }}_${{ matrix.arch }}.${{ steps.get_os_prefix.outputs.suffix }}
         asset_content_type: application/octet-stream
