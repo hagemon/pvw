@@ -92,11 +92,9 @@ jobs:
 
     - name: Create archive for Windows
       if: startsWith(matrix.os, 'windows')
+      shell: powershell
       run: |
-        # Install zip
-        choco install zip
-        # Create zip archive
-        zip -r pvw.zip pvw_py.exe pvw.exe
+        tar -a -c -f pvw.zip pvw.exe pvw_py.exe
 
     # - name: Create archive for Linux and macOS
     #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
@@ -113,7 +111,7 @@ jobs:
         body: |
           Release v${{ steps.get_os_prefix.outputs.version }}
         draft: false
-        prerelease: false
+        prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Assets
