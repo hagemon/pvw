@@ -14,7 +14,7 @@ Based on the built-in venv since python 3.6.
 
 As we have not gained a proper way to sign my application (which may be improved soon), we provide `.zip` file for Windows users.
 
-1. Download `pvw_win.zip` in [releases](https://github.com/hagemon/pvw/releases) page.
+1. Download `pvw_windows_amd64.zip` in [releases](https://github.com/hagemon/pvw/releases) page.
 2. Unzip it into a path, e.g. `D:\pvw`.
 3. Add the path `D:\pvw` to environment variable `PATH`.
 

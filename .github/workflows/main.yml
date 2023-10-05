@@ -105,7 +105,7 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const os = "${{ matrix.os }}".split('-')[0]
+          var os = "${{ matrix.os }}".split('-')[0]
           if (os == "ubuntu") {
             os = "linux"
           }
