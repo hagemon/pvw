@@ -106,28 +106,19 @@ jobs:
       with:
         script: |
           const os = "${{ matrix.os }}".split('-')[0]
+          if (os == "ubuntu") {
+            os = "linux"
+          }
           const suffix = "${{ matrix.os }}".startsWith("win") ? "zip" : "tar.gz"
           core.setOutput('os', os)
           core.setOutput('suffix', suffix)
 
-    - name: Upload Assets for Windows
+    - name: Upload Assets
       uses: actions/upload-release-asset@v1
-      if: startsWith(matrix.os, 'windows')
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: pvw.zip
-        asset_name: pvw_windows_${{ matrix.arch }}.zip
-        asset_content_type: application/octet-stream
-
-    - name: Upload Assets for *nix
-      uses: actions/upload-release-asset@v1
-      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: pvw.tar.gz
-        asset_name: pvw_${{ steps.get_os_prefix.outputs.os }}_${{ matrix.arch }}.tar.gz
+        asset_path: pvw.${{ steps.get_os_prefix.outputs.suffix }}
+        asset_name: pvw_${{ steps.get_os_prefix.outputs.os }}_${{ matrix.arch }}.${{ steps.get_os_prefix.outputs.suffix }}
         asset_content_type: application/octet-stream
