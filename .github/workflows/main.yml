@@ -9,11 +9,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macOS-latest]
-        arch: [amd64, arm64]
-        exclude:
-          - os: windows-latest
-            arch: arm64
+        # os: [windows-latest, ubuntu-latest, macOS-latest]
+        # arch: [amd64, arm64]
+        # exclude:
+        #   - os: windows-latest
+        #     arch: arm64
+        os: [windows-latest]
+        arch: [amd64]
     
     steps:
     - uses: actions/checkout@v2
@@ -36,28 +38,28 @@ jobs:
         # Build executable
         pyinstaller -n pvw_py --onefile --distpath . main.py
 
-    - name: Install upx and shc for macOS
-      if: startsWith(matrix.os, 'macOS')
-      run: |
-        brew install shc
-        brew install upx
+    # - name: Install upx and shc for macOS
+    #   if: startsWith(matrix.os, 'macOS')
+    #   run: |
+    #     brew install shc
+    #     brew install upx
 
-    - name: Install upx and shc for Ubuntu
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y upx-ucl shc
+    # - name: Install upx and shc for Ubuntu
+    #   if: startsWith(matrix.os, 'ubuntu')
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y upx-ucl shc
 
-    - name: Build Linux and macOS exe
-      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
-      env:
-        UPX_PATH: /usr/local/bin/upx
-      run: |
-        # Install PyInstaller and upx
-        pip3 install pyinstaller
+    # - name: Build Linux and macOS exe
+    #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+    #   env:
+    #     UPX_PATH: /usr/local/bin/upx
+    #   run: |
+    #     # Install PyInstaller and upx
+    #     pip3 install pyinstaller
         
-        # Build executable
-        pyinstaller --onefile main.py --distpath . -n pvw_py
+    #     # Build executable
+    #     pyinstaller --onefile main.py --distpath . -n pvw_py
 
     - name: Build Windows ps1 to exe
       if: startsWith(matrix.os, 'windows')
@@ -68,11 +70,11 @@ jobs:
         import-module -Name ps2exe
         Invoke-PS2EXE -inputFile pvw.ps1 -outputFile pvw.exe
 
-    - name: Build Linux/macOS sh to exe
-      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
-      run: |      
-        # Build executable
-        shc -f pvw.sh -o pvw
+    # - name: Build Linux/macOS sh to exe
+    #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+    #   run: |      
+    #     # Build executable
+    #     shc -f pvw.sh -o pvw
 
     - name: Create archive for Windows
       if: startsWith(matrix.os, 'windows')
@@ -82,10 +84,10 @@ jobs:
         # Create zip archive
         zip -r pvw.zip pvw_py.exe pvw.exe
 
-    - name: Create archive for Linux and macOS
-      if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
-      run: |
-        tar -czvf pvw.tar.gz pvw_py pvw
+    # - name: Create archive for Linux and macOS
+    #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
+    #   run: |
+    #     tar -czvf pvw.tar.gz pvw_py pvw
 
     - name: Create Release
       id: create_release
