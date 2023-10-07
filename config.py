@@ -6,11 +6,8 @@ from shell_executor import ShellExecutor
 
 class Config:
     def __init__(self):
-        if getattr(sys, "frozen", False):
-            application_path = os.path.dirname(sys.executable)
-        elif __file__:
-            application_path = os.path.dirname(__file__)
-        config_dir = os.path.join(application_path, "config")
+        user_path = os.path.expanduser('~') 
+        config_dir = os.path.join(user_path, '.pvw' , "config")
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
         self.config_path = os.path.join(config_dir, "config.json")

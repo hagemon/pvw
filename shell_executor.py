@@ -8,7 +8,7 @@ class ShellExecutor:
     def __init__(self) -> None:
         self.on_win = sys.platform.startswith("win")
         self.py = self.check_python_installation()
-        self.pipe_name = "_envs._cfg"
+        self.pipe_name = os.path.join(os.path.expanduser('~'), '.pvw', "_envs._cfg")
 
     @staticmethod
     def run(cmds: [str], shell=False):

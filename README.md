@@ -10,6 +10,12 @@ Based on the built-in venv since python 3.6.
 
 ### Linux
 
+For Ubuntu and Debian, you should firstly install `python3-venv`.
+
+```bash
+apt install python3-venv
+```
+
 ### Windows
 
 As we have not gained a proper way to sign my application (which may be improved soon), we provide `.zip` file for Windows users.
@@ -73,11 +79,25 @@ pvw create env_name
 
 #### Activate venv
 
-Activate an existing venv:
+For **Windows**, activate an existing venv with:
 
 ```
 pvw activate st
 ```
+
+For **Linux/Mac**, activate venv with `source` command:
+
+```
+source pvw activate st
+```
+
+or simply use a shorter command
+
+```
+source pvw st
+```
+
+if your environment name is not conflict with our keywords.
 
 To deactivate current venv, just type `deactivate` inside environment. E.g. in Windows
 
@@ -85,7 +105,7 @@ To deactivate current venv, just type `deactivate` inside environment. E.g. in W
 (st) PS D:\Users> deactivate
 ```
 
-Use `python`, `pip` or any other tools inside environment as usual as in `venv`.
+Use `python`, `pip` or any other commands inside environment as usual as in `venv`.
 
 
 #### Remove venv

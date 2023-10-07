@@ -75,14 +75,14 @@ jobs:
     #     # Build executable
     #     pyinstaller --onefile main.py --distpath . -n pvw_py
 
-    - name: Build Windows ps1 to exe
-      if: startsWith(matrix.os, 'windows')
-      shell: powershell
-      run: |
-        # install ps2exe
-        Install-Module -Name ps2exe -Force
-        import-module -Name ps2exe
-        Invoke-PS2EXE -inputFile pvw.ps1 -outputFile pvw.exe
+    # - name: Build Windows ps1 to exe
+    #   if: startsWith(matrix.os, 'windows')
+    #   shell: powershell
+    #   run: |
+    #     # install ps2exe
+    #     Install-Module -Name ps2exe -Force
+    #     import-module -Name ps2exe
+    #     Invoke-PS2EXE -inputFile pvw.ps1 -outputFile pvw.exe
 
     # - name: Build Linux/macOS sh to exe
     #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
@@ -94,7 +94,7 @@ jobs:
       if: startsWith(matrix.os, 'windows')
       shell: powershell
       run: |
-        tar -a -c -f pvw.zip pvw.exe pvw_py.exe
+        tar -a -c -f pvw.zip pvw.ps1 pvw_py.exe
 
     # - name: Create archive for Linux and macOS
     #   if: startsWith(matrix.os, 'ubuntu') || startsWith(matrix.os, 'macOS')
