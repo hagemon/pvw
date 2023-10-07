@@ -3,6 +3,11 @@
 PIPE_NAME="$HOME/.pvw/_envs._cfg"
 params=("$@")
 
+# Support shorten command to activate venvs, e.g. source pvw env
+if [ "$0" != "$BASH_SOURCE" ] && [ "$1" != "activate" ]; then
+    params=("activate" "${params[@]}")
+fi
+
 if [ $# -gt 0 ]
 then
     # python -m cProfile -s time main.py "${params[@]}" # for evaluating execution time
