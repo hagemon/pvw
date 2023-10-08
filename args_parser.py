@@ -1,7 +1,7 @@
 import argparse
 from op import Operation
 
-parser = argparse.ArgumentParser(description="Manage python venv environments")
+parser = argparse.ArgumentParser(description="Manage python venv environments.", formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("-v", "--version", action="version", version="pvw version 0.0.1")
 subparsers = parser.add_subparsers(dest="command")
 
@@ -30,7 +30,7 @@ config_get_parser.add_argument("key", help="Avaliable option: {venv_path}")
 
 
 # activate
-activate_parser = subparsers.add_parser("activate", help="Activate venv.")
+activate_parser = subparsers.add_parser("activate", help="""Activate venv.\nUse `source pvw activate ENV_NAME` to activate venv.\nOr simply use `source pvw ENV_NAME`.""")
 activate_parser.add_argument("name", help="Venv name.")
 
 # create

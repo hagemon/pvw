@@ -168,3 +168,4 @@ config/*
 .vscode
 *.pfx
 *.x.c
+debian
