@@ -4,26 +4,16 @@ A lightweight python venv wrapper for virtual environment management.
 
 Based on the built-in venv since python 3.6.
 
+## Pre-requirement
+
+- Python >= 3.6
+- python-venv
+
 ## Installation
 
-### MacOS 
-
-### Linux
-
-For Ubuntu and Debian, you should firstly install `python3-venv`.
-
-```bash
-apt install python3-venv
 ```
-
-### Windows
-
-As we have not gained a proper way to sign my application (which may be improved soon), we provide `.zip` file for Windows users.
-
-1. Download `pvw_windows_amd64.zip` in [releases](https://github.com/hagemon/pvw/releases) page.
-2. Unzip it into a path, e.g. `D:\pvw`.
-3. Add the path `D:\pvw` to environment variable `PATH`.
-
+pip install pvw
+```
 ## Usage
 
 ```
@@ -136,57 +126,24 @@ pvw cp env1 env2
 
 ## Build From Source
 
-### Build python executable file
-
-Using `pyinstaller` and `upx` to build a executable file, if you have not installed pyinstaller and upx, try
+### Using Makefile
 
 ```bash
-pip install pyinstaller
+cd src/pvw
+make
+sudo make install
 ```
+The executable binary `pvw` and `pvw_py` will be installed in your /usr/bin/ directory.
 
-#### For Windows
+Note that `pyinstaller` and `termcolor` will also be installed.
 
-Download [upx](https://upx.github.io/) and add it to PATH, then build the executable file for python script:
+### Using setuptools
 
 ```bash
-pyinstaller --onefile main.py --distpath ./dist/win -n pvw_py
+pip install --upgrade build setuptools # skip if already installed
+python -m build
+pip install dist/pvw-x.x.x.tar.gz # x.x.x is the built version of pvw
 ```
-
-#### For MacOS / Linux
-
-use `apt` or `homebrew` to install `upx`, then `pyinstaller` should automatically detect the path of `upx`
-
-```bash
-pyinstaller --onefile main.py --distpath ./dist/macOS -n pvw_py
-```
-
-Hint: the name `pvw_py` should not be modified, or you can custom this name by also editing the `pvw.ps1` script.
-
-### Build shell executable file
-
-#### For Windows
-
-Use [ps2exe](https://github.com/MScholtes/PS2EXE) to build `pvw.ps1` to `pvw.exe`
-
-```powershell
-mkdir -ErrorAction Ignore .\dist\win
-ps2exe .\pvw.ps1 .\dist\win\pvw.exe
-```
-Note that `ps2exe` should be ran in powershell 5, then used in powershell core (powershell 7).
-
-#### For MacOS
-
-Use `shc` to build `pvw.sh` to `pvw`
-
-```bash
-mkdir -p dist/macOS ; shc -f pvw.sh -o ./dist/macOS/pvw
-```
-
-### Add pvw to environment variable (Windows)
-
-Move `pvw.exe` and `pvw_py.exe` into the pvw path, e.g. `D:/pvw`
-
-add `D:/pvw` to environment variable `PATH`
 
 
 ## Architecture

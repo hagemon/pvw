@@ -1,6 +1,6 @@
-from config import config
+from pvw.config import config
 import os
-from shell_executor import ShellExecutor
+from pvw.shell_executor import ShellExecutor
 from termcolor import colored
 
 

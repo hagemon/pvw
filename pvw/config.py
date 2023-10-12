@@ -1,7 +1,6 @@
 import os
 import json
-import sys
-from shell_executor import ShellExecutor
+from pvw.shell_executor import ShellExecutor
 
 
 class Config:

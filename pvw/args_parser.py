@@ -1,5 +1,5 @@
 import argparse
-from op import Operation
+from pvw.op import Operation
 
 parser = argparse.ArgumentParser(description="Manage python venv environments.", formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("-v", "--version", action="version", version="pvw version 0.0.1")

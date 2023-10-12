@@ -1,7 +1,10 @@
 BINDIR := /usr/bin
 
+.PHONY: all
+
 all:
-	pyinstaller --onefile main.py --distpath . --clean -n pvw_py
+	pip install pyinstaller termcolor
+	$${HOME}/.local/bin/pyinstaller --onefile main.py --distpath . --clean -n pvw_py
 
 install:
 	mkdir -p ${DESTDIR}${BINDIR}
