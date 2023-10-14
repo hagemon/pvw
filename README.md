@@ -64,7 +64,7 @@ pvw config set venv_path=PATH/TO/VENV # set venv_path
 #### Create venv
 
 ```
-pvw create env_name
+pvw create ENV_NAME
 ```
 
 #### Activate venv
@@ -72,19 +72,19 @@ pvw create env_name
 For **Windows**, activate an existing venv with:
 
 ```
-pvw activate st
+pvw activate ENV_NAME
 ```
 
 For **Linux/Mac**, activate venv with `source` command:
 
 ```
-source pvw activate st
+source pvw activate 
 ```
 
 or simply use a shorter command
 
 ```
-source pvw st
+source pvw ENV_NAME
 ```
 
 if your environment name is not conflict with our keywords.
@@ -92,7 +92,7 @@ if your environment name is not conflict with our keywords.
 To deactivate current venv, just type `deactivate` inside environment. E.g. in Windows
 
 ```
-(st) PS D:\Users> deactivate
+(ENV_NAME) PS D:\Users> deactivate
 ```
 
 Use `python`, `pip` or any other commands inside environment as usual as in `venv`.
