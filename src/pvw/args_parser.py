@@ -29,7 +29,7 @@ config_get_parser.add_argument("key", help="avaliable option: {venv_path}")
 
 
 # activate
-activate_parser = subparsers.add_parser("activate", help="""activate venv.\nFor Linux/Mac:\nUse `source pvw activate ENV_NAME` to activate venv\nor simply use `source pvw ENV_NAME`.\n\nFor Windows:\nuse `pvw activate ENV_NAME`""")
+activate_parser = subparsers.add_parser("activate", help="""activate venv.\nFor Linux/Mac:\nUse `source pvw activate ENV_NAME` to activate venv\nor simply use `source pvw ENV_NAME`.\n\nFor Windows:\nuse `pvw activate ENV_NAME`\nor simply use `pvw ENV_NAME`""")
 activate_parser.add_argument("name", help="venv name.")
 
 # create

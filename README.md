@@ -75,10 +75,18 @@ For **Windows**, activate an existing venv with:
 pvw activate ENV_NAME
 ```
 
+or simply use
+
+```
+pvw ENV_NAME
+```
+
+for short.
+
 For **Linux/Mac**, activate venv with `source` command:
 
 ```
-source pvw activate 
+source pvw activate ENV_NAME
 ```
 
 or simply use a shorter command
@@ -145,7 +153,10 @@ python -m build
 pip install dist/pvw-x.x.x.tar.gz # x.x.x is the built version of pvw
 ```
 
+## To-do list
 
-## Architecture
-
-To Be Continued...
+- Customize venv path
+- Simplify activate command in Linux/Mac OS
+- Enable setting default venv in terminal
+- Enable Editable installation (for dev)
+- Add unit tests

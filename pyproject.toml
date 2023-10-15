@@ -12,7 +12,7 @@ description = "a lightweight python venv wrapper to manage venvs"
 readme = "README.md"
 requires-python = ">=3.6"
 license = {text = "MIT"}
-version = "0.0.2"
+version = "0.0.3"
 keywords = ["venv"]
 classifiers = [
     "Programming Language :: Python :: 3",
