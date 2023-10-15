@@ -19,6 +19,7 @@ classifiers = [
 ]
 dependencies = [
     'importlib-metadata; python_version>"3.6"',
+    "termcolor"
 ]
 
 [tool.setuptools.packages.find]
