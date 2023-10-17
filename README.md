@@ -1,8 +1,10 @@
 # pvw
 
-A lightweight python venv wrapper for virtual environment management.
+A lightweight (~10kB) python venv wrapper for virtual environment management.
 
 Based on the built-in venv since python 3.6.
+
+![](screenshot.png)
 
 ## Pre-requirement
 
