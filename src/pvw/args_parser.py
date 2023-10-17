@@ -77,4 +77,4 @@ def parse(version):
 
 
 if __name__ == "__main__":
-    parse()
+    parse(version="0.0.3")
