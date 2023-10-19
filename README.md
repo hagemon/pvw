@@ -19,22 +19,32 @@ pip install pvw
 ## Usage
 
 ```
-pvw [-h] {ls,config,activate,create,rm,mv,cp}
+usage: pvw [-h] [-v] {ls,config,activate,create,rm,mv,cp} ...
 
-Manage python venv environments
+Manage python venv environments.
 
 positional arguments:
   {ls,config,activate,create,rm,mv,cp}
-    ls                  List all venvs.
-    config              Get or set pvw config.
-    activate            Activate venv.
-    create              Create a new venv.
-    rm                  Remove a venv.
-    mv                  Move(rename) venv to another place.
-    cp                  Copy venv.
-```
+    ls                  list all venvs.
+    config              get or set pvw config
+    activate            activate venv.
+                        For Linux/Mac:
+                        Use `source pvw activate ENV_NAME` to activate venv
+                        or simply use `source pvw ENV_NAME`.
 
-You will be asked to set a `venv_path` to store venvs at the first time you use `pvw`.
+                        For Windows:
+                        use `pvw activate ENV_NAME`
+                        or a shorter `pvw ENV_NAME`
+    create              create a new venv.
+    rm                  remove a venv.
+    mv                  move(rename) venv to another place.
+    cp                  copy venv.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+
+```
 
 #### List venvs
 
@@ -42,7 +52,9 @@ You will be asked to set a `venv_path` to store venvs at the first time you use 
 pvw ls [--show-size]
 ```
 
-List all created venvs, including name, path and size. Note that size will only be displayed when the `--show-size` modifier is used, which would take a few seconds.
+List all created venvs, including name, path. 
+
+Adding `--show-size` modifier will show sizes, which may take a few seconds.
 
 ```
 Name   Path                  Size
@@ -77,13 +89,12 @@ For **Windows**, activate an existing venv with:
 pvw activate ENV_NAME
 ```
 
-or simply use
+or a shorter command:
 
 ```
 pvw ENV_NAME
 ```
 
-for short.
 
 For **Linux/Mac**, activate venv with `source` command:
 
@@ -91,40 +102,42 @@ For **Linux/Mac**, activate venv with `source` command:
 source pvw activate ENV_NAME
 ```
 
-or simply use a shorter command
+or for short:
 
 ```
 source pvw ENV_NAME
 ```
 
-if your environment name is not conflict with our keywords.
+**Note**: Shorter command only works on non-keywords venv names.
 
-To deactivate current venv, just type `deactivate` inside environment. E.g. in Windows
+To deactivate, use `deactivate` inside environment. E.g. in Windows
 
 ```
 (ENV_NAME) PS D:\Users> deactivate
+PS D:\Users> 
 ```
 
-Use `python`, `pip` or any other commands inside environment as usual as in `venv`.
 
 
 #### Remove venv
 
 ```
-pvw rm env_name
+pvw rm ENV_NAME
 ```
 
-You may be asked to confirm the venv to be removed.
+Removal needs to be confirmed.
 
 #### Move or rename venv
 
-Move `env1` to a venv `env2`, the original venv would disappear.
+Move (or rename) `env1` to a venv `env2`, 
 
 ```
 pvw mv env1 env2
 ```
 
-You may be asked to confirm the venv to be moved.
+Movement needs to be confirmed.
+
+**Note**: the original venv would disappear.
 
 #### Copy venv
 
