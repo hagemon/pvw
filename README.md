@@ -175,3 +175,4 @@ pip install dist/pvw-x.x.x.tar.gz # x.x.x is the built version of pvw
 - Enable setting default venv in terminal
 - Enable Editable installation (for dev)
 - Add unit tests
+- Support specific python version (if installed)

@@ -13,7 +13,7 @@ readme = "README.md"
 requires-python = ">=3.6"
 license = {text = "MIT"}
 version = "0.0.3"
-keywords = ["venv"]
+keywords = ["venv", "virtual env", "python"]
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
