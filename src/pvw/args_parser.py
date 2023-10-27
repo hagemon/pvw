@@ -1,5 +1,6 @@
 import argparse
 from pvw.op import Operation
+import fire
 
 parser = argparse.ArgumentParser(
     prog="pvw",
