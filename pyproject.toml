@@ -5,34 +5,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pvw"
-authors = [
-    {name = "Hagemon", email = "ooonefolder@gmail.com"},
-]
+authors = [{ name = "Hagemon", email = "ooonefolder@gmail.com" }]
 description = "a lightweight python venv wrapper to manage venvs"
 readme = "README.md"
 requires-python = ">=3.6"
-license = {text = "MIT"}
+license = { text = "MIT" }
 version = "0.0.3"
 keywords = ["venv", "virtual env", "python"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-]
-dependencies = [
-    'importlib-metadata; python_version>"3.6"',
-    "termcolor"
-]
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = ['importlib-metadata; python_version>"3.6"', "termcolor", "fire"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools]
-script-files=['bin/pvw', 'bin/pvw.ps1']
+script-files = ['bin/pvw', 'bin/pvw.ps1']
 
 [project.urls]
-Homepage="https://github.com/hagemon/pvw"
-Repository="https://github.com/hagemon/pvw"
-Documentation="https://github.com/hagemon/pvw"
+Homepage = "https://github.com/hagemon/pvw"
+Repository = "https://github.com/hagemon/pvw"
+Documentation = "https://github.com/hagemon/pvw"
 
 [project.scripts]
 pvw-py = "pvw.main:main"
-

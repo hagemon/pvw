@@ -2,7 +2,7 @@ from pvw.op2 import Operation
 from pvw.env import EnvironmentManager
 import fire
 
-_em = EnvironmentManager()
+_env_manager = EnvironmentManager()
 
 class Config(object):
     """get or set variables in config"""
@@ -43,8 +43,9 @@ class Parser(object):
         Args:
             show_size: whether show sizes of each venv, this operation could take a while.
         """
-        _em.parse_size = show_size
-        _em.show()
+        if show_size:
+            _env_manager.read_size()
+        _env_manager.show()
 
     def create(self, name):
         """
@@ -53,7 +54,7 @@ class Parser(object):
         Args:
             name: name of venv to create.
         """
-        return "create"
+        _env_manager.create(name=name)
 
     def rm(self, name):
         """
@@ -62,7 +63,7 @@ class Parser(object):
         Args:
             name: name of venv to remove.
         """
-        return "remove"
+        _env_manager.remove(name=name)
 
     def activate(self, name):
         """
@@ -71,6 +72,7 @@ class Parser(object):
         Args:
             name: name of venv to activate.
         """
+        _env_manager.activate(name=name)
         return "activate"
 
     def mv(self, src, dest):
@@ -81,7 +83,7 @@ class Parser(object):
             src: original venv name, which would disappear after moving
             dest: new venv name
         """
-        return "move"
+        _env_manager.move(source=src, target=dest)
 
     def cp(self, src, dest):
         """
@@ -91,7 +93,7 @@ class Parser(object):
             src: original venv name
             dest: new venv name
         """
-        return "copy"
+        _env_manager.copy(source=src, target=dest)
 
 
 if __name__ == "__main__":

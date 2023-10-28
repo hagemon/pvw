@@ -17,9 +17,12 @@ def _get_directory_size(path="."):
 
 
 class Environment:
-    def __init__(self, name, path, size):
+    def __init__(self, name, path):
         self.name = name
         self.path = path
+        self.size = ""  # lazy load
+
+    def set_size(self, size):
         self.size = size
 
     def to_list(self):
@@ -32,10 +35,11 @@ class EnvironmentManager:
     """
     Manage and log the principle information about environment, feed then to ShellExecutor to communicate with system.
     """
-    def __init__(self, parse_size=False):
-        self.parse_size = parse_size
+
+    def __init__(self):
         self.shell = ShellExecutor()
         self._envs = self.load()
+        self.show_size = False
 
     def load(self):
         config.build_venv_path()
@@ -44,21 +48,24 @@ class EnvironmentManager:
             if env_name.startswith("."):
                 continue
             path = os.path.join(config.venv_path, env_name)
-            if self.parse_size:
-                size = "{:.2f}MB".format(_get_directory_size(path=path))
-            else:
-                size = ""
-            env = Environment(env_name, path, size)
+            env = Environment(env_name, path)
             envs[env_name] = env
         return envs
+
+    def read_size(self):
+        self.show_size = True
+        for name in self._envs:
+            path = os.path.join(config.venv_path, name)
+            size = "{:.2f}MB".format(_get_directory_size(path=path))
+            self._envs[name].size = size
 
     # Operations to show or check envs
 
     def show(self, env=""):
-        if self.parse_size:
+        if self.show_size:
             header = ["Name", "Path", "Size"]
         else:
-            header = ['Name', 'Path']
+            header = ["Name", "Path"]
         if env and self.exists(env):
             env_list = [self._envs[env].to_list()]
         else:
@@ -70,7 +77,7 @@ class EnvironmentManager:
         for i, column in enumerate(header):
             print(f"{column:<{col_widths[i]}}", end=" ")
         print()
-        print(colored("-"*sum(col_widths), 'green'))
+        print(colored("-" * sum(col_widths), "green"))
         if env_list:
             for row in env_list:
                 for i, cell in enumerate(row):
