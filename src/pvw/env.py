@@ -61,13 +61,13 @@ class EnvironmentManager:
 
     # Operations to show or check envs
 
-    def show(self, env=""):
+    def show(self, envs=[]):
         if self.show_size:
             header = ["Name", "Path", "Size"]
         else:
             header = ["Name", "Path"]
-        if env and self.exists(env):
-            env_list = [self._envs[env].to_list()]
+        if envs:
+            env_list = [self._envs[env].to_list() for env in envs if self.exists(env)]
         else:
             env_list = [self._envs[name].to_list() for name in self._envs]
         col_widths = [
@@ -115,14 +115,21 @@ class EnvironmentManager:
         path = os.path.join(config.venv_path, name)
         self.shell.activate_env(path)
 
-    def remove(self, name):
-        self.check_exists(name=name)
-        env = self._envs[name]
-        path = env.path
-        self.show(env=name)
-        confirm = input(colored(f"Sure to remove `{name}`? (Y/N)", "red"))
+    def remove(self, names):
+        valid_names = []
+        for name in names:
+            try:
+                self.check_exists(name)
+                valid_names.append(name)
+            except NameError as e:
+                print(e)
+        self.show(envs=valid_names)
+        confirm = input(colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red"))
         if confirm.lower() == "y":
-            self.shell.remove_env(path)
+            for name in valid_names:
+                env = self._envs[name]
+                path = env.path
+                self.shell.remove_env(path)
 
     def copy(self, source, target):
         self.check_exists(source)
@@ -140,7 +147,7 @@ class EnvironmentManager:
     def move(self, source, target):
         self.check_exists(source)
         self.check_not_exists(target)
-        self.show(env=source)
+        self.show(env=[source])
         confirm = input(f"Sure to move venv `{source}` to `{target}`? (Y/N)")
         if confirm.lower() == "y":
             print("Start moving...")

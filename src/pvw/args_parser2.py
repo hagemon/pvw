@@ -1,8 +1,10 @@
-from pvw.op2 import Operation
 from pvw.env import EnvironmentManager
+from pvw.config import config
+
 import fire
 
 _env_manager = EnvironmentManager()
+
 
 class Config(object):
     """get or set variables in config"""
@@ -14,7 +16,8 @@ class Config(object):
             name (str): The config option, including `venv_path` and `default_env`.
             value (int): The value to the option.
         """
-        return f"set {name}"
+        if name == "venv_path":
+            config.set(name, value)
 
     def get(self, name):
         """
@@ -22,7 +25,9 @@ class Config(object):
         Args:
             name (str): The config option, including `venv_path` and `default_env`.
         """
-        return f"get {name}"
+        if name == "venv_path":
+            path = config.get(name)
+            print(path)
 
 
 class Parser(object):
@@ -56,14 +61,15 @@ class Parser(object):
         """
         _env_manager.create(name=name)
 
-    def rm(self, name):
+    def rm(self, *names):
         """
         remove an exists venv
 
         Args:
             name: name of venv to remove.
         """
-        _env_manager.remove(name=name)
+        _env_manager.remove(names=names)
+        # _env_manager.remove(name=name)
 
     def activate(self, name):
         """
