@@ -83,14 +83,23 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
 
     def copy_env(self, source_path, target_path):
         self.create_env(target_path)
+        if self.on_win:
+            python_pattern = "python*.exe"
+            pip_pattern = "pip*.exe"
+            script_path = "Scripts"
+        else:
+            python_pattern = "python*"
+            pip_pattern = "pip*"
+            script_path = "bin"
         shutil.copytree(
             source_path,
             target_path,
-            ignore=shutil.ignore_patterns("python*.exe", "pip*.exe"),
+            ignore=shutil.ignore_patterns(python_pattern, pip_pattern),
             dirs_exist_ok=True,
         )
         self.replace_path("pyvenv.cfg", source_path, target_path)
-        self.replace_path(os.path.join("Scripts", "activate"), source_path, target_path)
-        self.replace_path(
-            os.path.join("Scripts", "activate.bat"), source_path, target_path
-        )
+        self.replace_path(os.path.join(script_path, "activate"), source_path, target_path)
+        if self.on_win:
+            self.replace_path(
+                os.path.join(script_path, "activate.bat"), source_path, target_path
+            )

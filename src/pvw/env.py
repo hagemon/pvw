@@ -147,7 +147,7 @@ class EnvironmentManager:
     def move(self, source, target):
         self.check_exists(source)
         self.check_not_exists(target)
-        self.show(env=[source])
+        self.show(envs=[source])
         confirm = input(f"Sure to move venv `{source}` to `{target}`? (Y/N)")
         if confirm.lower() == "y":
             print("Start moving...")
