@@ -1,115 +1,113 @@
 from pvw.env import EnvironmentManager
 from pvw.config import config
 
-import fire
+import click
 
 _env_manager = EnvironmentManager()
 
 
-class Config(object):
+@click.group
+@click.version_option()
+def pvw():
+    pass
+
+
+@pvw.command
+@click.option(
+    "-s",
+    "--show-size",
+    default=False,
+    is_flag=True,
+    help="whether show sizes of each venv, this operation could take a while.",
+)
+def ls(show_size):
+    """
+    list all venvs.
+    """
+    if show_size:
+        _env_manager.read_size()
+    _env_manager.show()
+
+
+@pvw.command()
+@click.argument("name")
+def create(name):
+    """
+    create a new venv
+    """
+    _env_manager.create(name=name)
+
+
+@pvw.command()
+@click.argument("names", nargs=-1)
+def rm(names):
+    """
+    remove an existing venv
+    """
+    _env_manager.remove(names=names)
+
+
+@pvw.command()
+@click.argument("name")
+def activate(name):
+    """
+    activate a venv, using `source pvw actvate env` or `source pvw env` in Unix, `pvw activate env` or `pvw env` in Windows
+    """
+    _env_manager.activate(name=name)
+
+
+@pvw.command()
+@click.argument("src")
+@click.argument("dest")
+def mv(src, dest):
+    """
+    move (or rename) venv `src` to `dest`
+
+    :src x
+    """
+    _env_manager.move(source=src, target=dest)
+
+
+@pvw.command()
+@click.argument("src")
+@click.argument("dest")
+def cp(src, dest):
+    """
+    copy venv `src` to `dest`
+    """
+    _env_manager.copy(source=src, target=dest)
+
+
+@pvw.group(name="config")
+def config_cli():
     """get or set variables in config"""
-
-    def set(self, name, value):
-        """
-        set config options.
-        Args:
-            name (str): The config option, including `venv_path` and `default_env`.
-            value (int): The value to the option.
-        """
-        if name == "venv_path":
-            config.set(name, value)
-
-    def get(self, name):
-        """
-        get config options.
-        Args:
-            name (str): The config option, including `venv_path` and `default_env`.
-        """
-        if name == "venv_path":
-            path = config.get(name)
-            print(path)
+    pass
 
 
-class Parser(object):
-    """A lightweight Python Venv Wrapper for environment management."""
-
-    def __init__(self, version) -> None:
-        self.config = Config()
-        self.version = version
-
-    def config(self):
-        get_output = self.config.get()
-        set_output = self.config.set()
-        return [get_output, set_output]
-
-    def ls(self, show_size=False):
-        """
-        list all venvs.
-
-        Args:
-            show_size: whether show sizes of each venv, this operation could take a while.
-        """
-        if show_size:
-            _env_manager.read_size()
-        _env_manager.show()
-
-    def create(self, name):
-        """
-        create a new venv
-
-        Args:
-            name: name of venv to create.
-        """
-        _env_manager.create(name=name)
-
-    def rm(self, *names):
-        """
-        remove an exists venv
-
-        Args:
-            names: names of venv to remove, you can input multiple env names.
-        """
-        _env_manager.remove(names=names)
-
-    def activate(self, name):
-        """
-        activate a venv, using `source pvw actvate env` or `source pvw env`
-
-        Args:
-            name: name of venv to activate.
-        """
-        _env_manager.activate(name=name)
-
-    def mv(self, src, dest):
-        """
-        move (or rename) venv `src` to `dest`
-
-        Args:
-            src: original venv name, which would disappear after moving
-            dest: new venv name
-        """
-        _env_manager.move(source=src, target=dest)
-
-    def cp(self, src, dest):
-        """
-        copy venv `src` to `dest`
-
-        Args"
-            src: original venv name
-            dest: new venv name
-        """
-        _env_manager.copy(source=src, target=dest)
-
-    def version(self):
-        return self.version
+@config_cli.command
+@click.argument("name")
+@click.argument("value")
+def set(name, value):
+    """
+    set config options, including `venv_path`.
+    """
+    if name == "venv_path":
+        config.set(name, value)
 
 
-def parse(version):
-    parser = Parser(version=version)
-    try:
-        fire.Fire(parser, name="pvw")
-    except NameError as e:
-        fire.Fire(command="--help")
+@config_cli.command
+@click.argument("name")
+def get(name):
+    """
+    get config options, including `venv_path`
+    """
+    if name == "venv_path":
+        path = config.get(name)
+        click.echo(path)
+
+
+def parse():
+    pvw(prog_name="pvw")
 
 
 if __name__ == "__main__":

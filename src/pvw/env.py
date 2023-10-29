@@ -122,7 +122,9 @@ class EnvironmentManager:
                 self.check_exists(name)
                 valid_names.append(name)
             except NameError as e:
-                print(e)
+                print(colored(e, "yellow"))
+        if not valid_names:
+            return
         self.show(envs=valid_names)
         confirm = input(colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red"))
         if confirm.lower() == "y":
