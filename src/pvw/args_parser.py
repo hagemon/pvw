@@ -49,11 +49,25 @@ def rm(names):
 
 @pvw.command()
 @click.argument("name")
-def activate(name):
+@click.option(
+    "--shorten",
+    hidden=True,
+    is_flag=True,
+    help="whether using a shorten stype for activating envs. (hidden option)",
+)
+def activate(name, shorten):
     """
     activate a venv, using `source pvw actvate env` or `source pvw env` in Unix, `pvw activate env` or `pvw env` in Windows
     """
-    _env_manager.activate(name=name)
+    try:
+        _env_manager.activate(name=name)
+    except NameError as e:
+        if shorten:
+            ctx = pvw.make_context("pvw", [name])
+            with ctx:
+                pvw.invoke(ctx)
+        else:
+            click.echo(e)
 
 
 @pvw.command()
@@ -62,8 +76,6 @@ def activate(name):
 def mv(src, dest):
     """
     move (or rename) venv `src` to `dest`
-
-    :src x
     """
     _env_manager.move(source=src, target=dest)
 

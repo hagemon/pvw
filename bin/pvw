@@ -3,20 +3,23 @@
 PIPE_NAME="$HOME/.pvw/_envs._cfg"
 params=("$@")
 
-if [ "$0" == "$BASH_SOURCE" ] && [ "$1" == "activate" ]; then
-    echo "Use `source pvw ENV_NAME` or `source pvw activate ENV_NAME` to activate venv"
-    exit 1
-fi
+ops=("ls" "create" "activate" "rm" "cp" "mv" "config")
 
-# Support shorten command to activate venvs, e.g. source pvw env
-if [ "$0" != "$BASH_SOURCE" ] && [ "$1" != "activate" ]; then
-    params=("activate" "${params[@]}")
+if [ "$0" == "$BASH_SOURCE" ] && [ "$1" == "activate" ]; then
+    echo "Use \`source pvw ENV_NAME\` or \`source pvw activate ENV_NAME\` to activate venv"
+    exit 1
 fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
   op="${params[1]}"
 else
   op="${params[0]}"
+fi
+
+# Support shorten command to activate venvs, e.g. source pvw env
+if [ "$0" != "$BASH_SOURCE" ] && [ "$op" != "activate" ] && [[ ! "${ops[@]}" =~ "$op" ]]; then
+    params=("activate" "${params[@]}" "--shorten")
+    op="activate"
 fi
 
 if [ $# -gt 0 ]
