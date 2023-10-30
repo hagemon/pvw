@@ -8,7 +8,7 @@ class ShellExecutor:
     def __init__(self) -> None:
         self.on_win = sys.platform.startswith("win")
         self.py = self.check_python_installation()
-        self.pipe_name = os.path.join(os.path.expanduser('~'), '.pvw', "_envs._cfg")
+        self.pipe_name = os.path.join(os.path.expanduser("~"), ".pvw", "_envs._cfg")
 
     @staticmethod
     def run(cmds: [str], shell=False):
@@ -84,21 +84,32 @@ e.g. `pvw config set venv_path=/PATH/TO/PLACE/VENVS`"""
     def copy_env(self, source_path, target_path):
         self.create_env(target_path)
         if self.on_win:
-            python_pattern = "python*.exe"
-            pip_pattern = "pip*.exe"
             script_path = "Scripts"
+            shutil.copytree(
+                source_path,
+                target_path,
+                ignore=shutil.ignore_patterns("python*.exe", "pip*.exe"),
+                dirs_exist_ok=True,
+            )
         else:
-            python_pattern = "python*"
-            pip_pattern = "pip*"
             script_path = "bin"
-        shutil.copytree(
-            source_path,
-            target_path,
-            ignore=shutil.ignore_patterns(python_pattern, pip_pattern),
-            dirs_exist_ok=True,
-        )
+            shutil.copytree(
+                source_path,
+                target_path,
+                ignore=shutil.ignore_patterns(script_path),
+                dirs_exist_ok=True,
+            )
+            shutil.copytree(
+                os.path.join(source_path, script_path),
+                os.path.join(target_path, script_path),
+                ignore=shutil.ignore_patterns("python*", "pip*"),
+                dirs_exist_ok=True,
+            )
+
         self.replace_path("pyvenv.cfg", source_path, target_path)
-        self.replace_path(os.path.join(script_path, "activate"), source_path, target_path)
+        self.replace_path(
+            os.path.join(script_path, "activate"), source_path, target_path
+        )
         if self.on_win:
             self.replace_path(
                 os.path.join(script_path, "activate.bat"), source_path, target_path
