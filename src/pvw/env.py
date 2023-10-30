@@ -17,9 +17,12 @@ def _get_directory_size(path="."):
 
 
 class Environment:
-    def __init__(self, name, path, size):
+    def __init__(self, name, path):
         self.name = name
         self.path = path
+        self.size = ""  # lazy load
+
+    def set_size(self, size):
         self.size = size
 
     def to_list(self):
@@ -32,10 +35,11 @@ class EnvironmentManager:
     """
     Manage and log the principle information about environment, feed then to ShellExecutor to communicate with system.
     """
-    def __init__(self, parse_size=False):
-        self.parse_size = parse_size
+
+    def __init__(self):
         self.shell = ShellExecutor()
         self._envs = self.load()
+        self.show_size = False
 
     def load(self):
         config.build_venv_path()
@@ -44,23 +48,26 @@ class EnvironmentManager:
             if env_name.startswith("."):
                 continue
             path = os.path.join(config.venv_path, env_name)
-            if self.parse_size:
-                size = "{:.2f}MB".format(_get_directory_size(path=path))
-            else:
-                size = ""
-            env = Environment(env_name, path, size)
+            env = Environment(env_name, path)
             envs[env_name] = env
         return envs
 
+    def read_size(self):
+        self.show_size = True
+        for name in self._envs:
+            path = os.path.join(config.venv_path, name)
+            size = "{:.2f}MB".format(_get_directory_size(path=path))
+            self._envs[name].size = size
+
     # Operations to show or check envs
 
-    def show(self, env=""):
-        if self.parse_size:
+    def show(self, envs=[]):
+        if self.show_size:
             header = ["Name", "Path", "Size"]
         else:
-            header = ['Name', 'Path']
-        if env and self.exists(env):
-            env_list = [self._envs[env].to_list()]
+            header = ["Name", "Path"]
+        if envs:
+            env_list = [self._envs[env].to_list() for env in envs if self.exists(env)]
         else:
             env_list = [self._envs[name].to_list() for name in self._envs]
         col_widths = [
@@ -70,7 +77,7 @@ class EnvironmentManager:
         for i, column in enumerate(header):
             print(f"{column:<{col_widths[i]}}", end=" ")
         print()
-        print(colored("-"*sum(col_widths), 'green'))
+        print(colored("-" * sum(col_widths), "green"))
         if env_list:
             for row in env_list:
                 for i, cell in enumerate(row):
@@ -108,14 +115,23 @@ class EnvironmentManager:
         path = os.path.join(config.venv_path, name)
         self.shell.activate_env(path)
 
-    def remove(self, name):
-        self.check_exists(name=name)
-        env = self._envs[name]
-        path = env.path
-        self.show(env=name)
-        confirm = input(colored(f"Sure to remove `{name}`? (Y/N)", "red"))
+    def remove(self, names):
+        valid_names = []
+        for name in names:
+            try:
+                self.check_exists(name)
+                valid_names.append(name)
+            except NameError as e:
+                print(colored(e, "yellow"))
+        if not valid_names:
+            return
+        self.show(envs=valid_names)
+        confirm = input(colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red"))
         if confirm.lower() == "y":
-            self.shell.remove_env(path)
+            for name in valid_names:
+                env = self._envs[name]
+                path = env.path
+                self.shell.remove_env(path)
 
     def copy(self, source, target):
         self.check_exists(source)
@@ -133,7 +149,7 @@ class EnvironmentManager:
     def move(self, source, target):
         self.check_exists(source)
         self.check_not_exists(target)
-        self.show(env=source)
+        self.show(envs=[source])
         confirm = input(f"Sure to move venv `{source}` to `{target}`? (Y/N)")
         if confirm.lower() == "y":
             print("Start moving...")

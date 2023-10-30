@@ -1,80 +1,126 @@
-import argparse
-from pvw.op import Operation
+from pvw.env import EnvironmentManager
+from pvw.config import config
 
-parser = argparse.ArgumentParser(prog="pvw", description="Manage python venv environments.", formatter_class=argparse.RawTextHelpFormatter)
-subparsers = parser.add_subparsers(dest="command")
+import click
 
-# list
-list_parser = subparsers.add_parser("ls", help="list all venvs.")
-list_parser.add_argument(
-    "--show-size", action="store_true", help="whether show sizes of each venv."
+_env_manager = EnvironmentManager()
+
+
+@click.group
+@click.version_option()
+def pvw():
+    pass
+
+
+@pvw.command
+@click.option(
+    "-s",
+    "--show-size",
+    default=False,
+    is_flag=True,
+    help="whether show sizes of each venv, this operation could take a while.",
 )
+def ls(show_size):
+    """
+    list all venvs.
+    """
+    if show_size:
+        _env_manager.read_size()
+    _env_manager.show()
 
-# config
-config_parser = subparsers.add_parser("config", help="get or set pvw config")
-config_subparsers = config_parser.add_subparsers(
-    help="config operations", dest="config_command", required=True
+
+@pvw.command()
+@click.argument("name")
+def create(name):
+    """
+    create a new venv
+    """
+    _env_manager.create(name=name)
+
+
+@pvw.command()
+@click.argument("names", nargs=-1)
+def rm(names):
+    """
+    remove an existing venv
+    """
+    _env_manager.remove(names=names)
+
+
+@pvw.command()
+@click.argument("name")
+@click.option(
+    "--shorten",
+    hidden=True,
+    is_flag=True,
+    help="whether using a shorten stype for activating envs. (hidden option)",
 )
-config_set_parser = config_subparsers.add_parser(
-    "set",
-    help="set value for config item, e.g. `pvw config set venv_path /PATH/TO/VENV_DIR`",
-)
-config_set_parser.add_argument(
-    "params", nargs="*", help="e.g. venv_path=/PATH/TO/VENV_PATH"
-)
-config_get_parser = config_subparsers.add_parser(
-    "get", help="get value of config item, e.g. `pvw config get venv_path"
-)
-config_get_parser.add_argument("key", help="avaliable option: {venv_path}")
-
-
-# activate
-activate_parser = subparsers.add_parser("activate", help="""activate venv.\nFor Linux/Mac:\nUse `source pvw activate ENV_NAME` to activate venv\nor simply use `source pvw ENV_NAME`.\n\nFor Windows:\nuse `pvw activate ENV_NAME`\nor simply use `pvw ENV_NAME`""")
-activate_parser.add_argument("name", help="venv name.")
-
-# create
-create_parser = subparsers.add_parser("create", help="create a new venv.")
-create_parser.add_argument("name", help="name of venv to create.")
-
-# remove
-remove_parser = subparsers.add_parser("rm", help="remove a venv.")
-remove_parser.add_argument("name", help="name of venv to remove.")
-
-# move
-move_parser = subparsers.add_parser("mv", help="move(rename) venv to another place.")
-move_parser.add_argument("source", help="name of source venv.")
-move_parser.add_argument("target", help="name of target venv.")
-
-# copy
-copy_parser = subparsers.add_parser("cp", help="copy venv.")
-copy_parser.add_argument("source", help="name of source venv.")
-copy_parser.add_argument("target", help="name of target venv.")
-
-
-def parse(version):
-    parser.add_argument("-v", "--version", action="version", version=f"pvw version {version}")
+def activate(name, shorten):
+    """
+    activate a venv, using `source pvw actvate env` or `source pvw env` in Unix, `pvw activate env` or `pvw env` in Windows
+    """
     try:
-        args = parser.parse_args()
-        op = Operation(args)
-        if args.command == "create":
-            op.create()
-        elif args.command == "rm":
-            op.remove()
-        elif args.command == "mv":
-            op.move()
-        elif args.command == "cp":
-            op.copy()
-        elif args.command == "config":
-            op.config()
-        elif args.command == "ls":
-            op.show()
-        elif args.command == "activate":
-            op.activate()
+        _env_manager.activate(name=name)
+    except NameError as e:
+        if shorten:
+            ctx = pvw.make_context("pvw", [name])
+            with ctx:
+                pvw.invoke(ctx)
         else:
-            parser.print_help()
-    except argparse.ArgumentError:
-        parser.print_help()
+            click.echo(e)
+
+
+@pvw.command()
+@click.argument("src")
+@click.argument("dest")
+def mv(src, dest):
+    """
+    move (or rename) venv `src` to `dest`
+    """
+    _env_manager.move(source=src, target=dest)
+
+
+@pvw.command()
+@click.argument("src")
+@click.argument("dest")
+def cp(src, dest):
+    """
+    copy venv `src` to `dest`
+    """
+    _env_manager.copy(source=src, target=dest)
+
+
+@pvw.group(name="config")
+def config_cli():
+    """get or set variables in config"""
+    pass
+
+
+@config_cli.command
+@click.argument("name")
+@click.argument("value")
+def set(name, value):
+    """
+    set config options, including `venv_path`.
+    """
+    if name == "venv_path":
+        config.set(name, value)
+
+
+@config_cli.command
+@click.argument("name")
+def get(name):
+    """
+    get config options, including `venv_path`
+    """
+    if name == "venv_path":
+        path = config.get(name)
+        click.echo(path)
+
+
+def parse():
+    pvw(prog_name="pvw")
 
 
 if __name__ == "__main__":
-    parse(version="0.0.3")
+    parse()

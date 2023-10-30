@@ -118,11 +118,10 @@ PS D:\Users>
 ```
 
 
-
 #### Remove venv
 
 ```
-pvw rm ENV_NAME
+pvw rm ENV_NAME_1 ENV_NAME_2 ENV_NAME_3 # support removing mutiple envs
 ```
 
 Removal needs to be confirmed.
@@ -171,7 +170,8 @@ pip install dist/pvw-x.x.x.tar.gz # x.x.x is the built version of pvw
 ## To-do list
 
 - Customize venv path
+- `init` command for setting up a project
 - Simplify activate command in Linux/Mac OS
 - Enable setting default venv in terminal
-- Enable Editable installation (for dev)
 - Add unit tests
+- Support specific python version (if installed)
