@@ -5,8 +5,8 @@ from pvw.shell_executor import ShellExecutor
 
 class Config:
     def __init__(self):
-        user_path = os.path.expanduser('~') 
-        config_dir = os.path.join(user_path, '.pvw' , "config")
+        user_path = os.path.expanduser("~")
+        config_dir = os.path.join(user_path, ".pvw", "config")
         if not os.path.exists(config_dir):
             os.makedirs(config_dir)
         self.config_path = os.path.join(config_dir, "config.json")
@@ -22,6 +22,7 @@ class Config:
         else:
             with open(self.config_path, "r") as f:
                 self.config = json.load(f)
+        self.check_venv_path()
         self.shell = ShellExecutor()
 
     def edit(self):
@@ -38,6 +39,41 @@ class Config:
             self.config[key] = value
             with open(self.config_path, "w") as f:
                 json.dump(self.config, f)
+
+    def add_venv(self, name, path):
+        self.config["venvs"].append(
+            {
+                "name": name,
+                "path": path,
+            }
+        )
+        with open(self.config_path, "w") as f:
+            json.dump(self.config, f)
+
+    def remove_venv(self, names):
+        venvs = [info for info in self.config['venvs'] if info['name'] not in names]
+        self.config['venvs'] = venvs
+        with open(self.config_path, "w") as f:
+            json.dump(self.config, f)
+
+    def check_venv_path(self):
+        try:
+            if "venvs" not in self.config:
+                self.config["venvs"] = []
+                path = self.config["venv_path"]
+                for env in os.listdir(path):
+                    if env.startswith("."):
+                        continue
+                    self.config["venvs"].append(
+                        {
+                            "name": env,
+                            "path": os.path.join(path, env),
+                        }
+                    )
+                with open(self.config_path, "w") as f:
+                    json.dump(self.config, f)
+        except Exception as e:
+            print(e)
 
     @property
     def venv_path(self):
