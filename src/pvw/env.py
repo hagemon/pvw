@@ -126,7 +126,9 @@ class EnvironmentManager:
         if not valid_names:
             return
         self.show(envs=valid_names)
-        confirm = input(colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red"))
+        confirm = input(
+            colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red")
+        )
         if confirm.lower() == "y":
             for name in valid_names:
                 env = self._envs[name]

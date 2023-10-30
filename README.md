@@ -78,7 +78,9 @@ pvw config set venv_path=PATH/TO/VENV # set venv_path
 #### Create venv
 
 ```
-pvw create ENV_NAME
+pvw create ENV_NAME  # in default venv path
+pvw create ./ENV_NAME  # in current directory
+pvw create /PATH/TO/VENV/ENV_NAME  # in specific directory
 ```
 
 #### Activate venv
