@@ -1,6 +1,7 @@
 from pvw.env import EnvironmentManager
 from pvw.config import config
-
+from pvw.template import Template
+import os
 import click
 
 _env_manager = EnvironmentManager()
@@ -57,7 +58,7 @@ def rm(names):
 )
 def activate(name, shorten):
     """
-    activate a venv, using `source pvw actvate env` or `source pvw env` in Unix, `pvw activate env` or `pvw env` in Windows
+    activate a venv. (additional `source` command is needed in Linux/MacOS)
     """
     try:
         _env_manager.activate(name=name)
@@ -68,6 +69,28 @@ def activate(name, shorten):
                 pvw.invoke(ctx)
         else:
             click.echo(e)
+
+
+@pvw.command()
+@click.argument("name")
+def init(name):
+    """
+    start a new project with default template
+    """
+    try:
+        path = os.path.join(os.getcwd(), name)
+        template = Template(name=name, path=path)
+        template.build()
+        is_create_venv = click.confirm(
+            "Do you want to create a new venv for this project?", default=True
+        )
+        if is_create_venv:
+            venv_name = input(f"Enter the name of venv ({name})")
+            if not venv_name:
+                venv_name = name
+            _env_manager.create(os.path.join(path, name))
+    except Exception as e:
+        print(e)
 
 
 @pvw.command()

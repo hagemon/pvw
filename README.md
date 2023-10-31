@@ -2,6 +2,8 @@
 
 A lightweight (~10kB) python venv wrapper for virtual environment management.
 
+Create venv or standard project in simple command line tool.
+
 Based on the built-in venv since python 3.6.
 
 ![](screenshot.png)
@@ -18,45 +20,46 @@ pip install pvw
 ```
 ## Usage
 
-```
-usage: pvw [-h] [-v] {ls,config,activate,create,rm,mv,cp} ...
+You can either start a raw project with `pvw init`, or just manage virtual envs with **core commands** .
 
-Manage python venv environments.
+### Start a project
 
-positional arguments:
-  {ls,config,activate,create,rm,mv,cp}
-    ls                  list all venvs.
-    config              get or set pvw config
-    activate            activate venv.
-                        For Linux/Mac:
-                        Use `source pvw activate ENV_NAME` to activate venv
-                        or simply use `source pvw ENV_NAME`.
-
-                        For Windows:
-                        use `pvw activate ENV_NAME`
-                        or a shorter `pvw ENV_NAME`
-    create              create a new venv.
-    rm                  remove a venv.
-    mv                  move(rename) venv to another place.
-    cp                  copy venv.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-
+```bash
+pvw init PROJ_NAME
 ```
 
-#### List venvs
+Initialize a python project, with a simple template as:
 
 ```
-pvw ls [--show-size]
+|- pyproject.toml
+|- src
+    |- PROJ_NAME
+          |- cli.py
+|- README.md
+|- License
 ```
 
-List all created venvs, including name, path. 
+You can decide whether creating a specific env for this project.
 
-Adding `--show-size` modifier will show sizes, which may take a few seconds.
+### Configuration
 
+Get or set the directory `venv_path` where venvs are stored in default.
+
+```bash
+pvw config get venv_path # get venv_path variable
+pvw config set venv_path=PATH/TO/VENV # set venv_path
 ```
+
+### Core commands
+
+We use `base` as a demo
+
+#### Show
+
+```shell
+# show name, path, and size(optional) of existing venvs.
+> pvw ls [--show-size]
+
 Name   Path                  Size
 --------------------------------------
 env1   C:\Users\venvs\env1   199.42MB
@@ -66,86 +69,44 @@ v2     C:\Users\venvs\v2     21.86MB
 v3     C:\Users\venvs\v3     21.85MB
 ```
 
-#### Get or set configs
-
-Get or set the directory `venv_path` where venvs are stored.
-
+#### Create
 ```bash
-pvw config get venv_path # get venv_path variable
-pvw config set venv_path=PATH/TO/VENV # set venv_path
+# Create venv `base` in either way:
+pvw create base  # in default venv path
+pvw create ./base  # in current directory
+pvw create /home/venvs/base  # in specific directory
 ```
 
-#### Create venv
+#### Activate/deactivate
+```powershell
+# For Windows
+pvw activate base  # standard way
+pvw base  # or a shorter way
 
-```
-pvw create ENV_NAME  # in default venv path
-pvw create ./ENV_NAME  # in current directory
-pvw create /PATH/TO/VENV/ENV_NAME  # in specific directory
-```
-
-#### Activate venv
-
-For **Windows**, activate an existing venv with:
-
-```
-pvw activate ENV_NAME
+deactivate  # exit
 ```
 
-or a shorter command:
+```shell
+# For Linux/MacOS
+source pvw activate base  # standard way
+source pvw base  # or a shorter way
 
-```
-pvw ENV_NAME
-```
-
-
-For **Linux/Mac**, activate venv with `source` command:
-
-```
-source pvw activate ENV_NAME
+deactivate # exit
 ```
 
-or for short:
+#### Copy or move
 
-```
-source pvw ENV_NAME
-```
-
-**Note**: Shorter command only works on non-keywords venv names.
-
-To deactivate, use `deactivate` inside environment. E.g. in Windows
-
-```
-(ENV_NAME) PS D:\Users> deactivate
-PS D:\Users> 
+```shell
+# copy or rename from a existing venv
+pvw cp base dev  # copy `base` to a new venv `dev`
+pvw mv dev foo  # rename `dev` to a new venv `foo`
 ```
 
+#### Remove
 
-#### Remove venv
-
-```
-pvw rm ENV_NAME_1 ENV_NAME_2 ENV_NAME_3 # support removing mutiple envs
-```
-
-Removal needs to be confirmed.
-
-#### Move or rename venv
-
-Move (or rename) `env1` to a venv `env2`, 
-
-```
-pvw mv env1 env2
-```
-
-Movement needs to be confirmed.
-
-**Note**: the original venv would disappear.
-
-#### Copy venv
-
-Copy `env1` to a new venv `env2`
-
-```
-pvw cp env1 env2
+```shell
+# remove both `dev` and `foo`
+pvw rm dev foo
 ```
 
 ## Build From Source
@@ -159,8 +120,6 @@ sudo make install
 ```
 The executable binary `pvw` and `pvw_py` will be installed in your /usr/bin/ directory.
 
-Note that `pyinstaller` and `termcolor` will also be installed.
-
 ### Using setuptools
 
 ```bash
@@ -171,8 +130,6 @@ pip install dist/pvw-x.x.x.tar.gz # x.x.x is the built version of pvw
 
 ## To-do list
 
-- Customize venv path
-- `init` command for setting up a project
 - Simplify activate command in Linux/Mac OS
 - Enable setting default venv in terminal
 - Add unit tests

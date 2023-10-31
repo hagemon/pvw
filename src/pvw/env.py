@@ -44,12 +44,12 @@ class EnvironmentManager:
     def load(self):
         config.build_venv_path()
         envs = {}
-        for env_name in os.listdir(config.venv_path):
-            if env_name.startswith("."):
-                continue
-            path = os.path.join(config.venv_path, env_name)
-            env = Environment(env_name, path)
-            envs[env_name] = env
+        venv_info = config.get("venvs")
+        for info in venv_info:
+            name = info["name"]
+            path = info["path"]
+            env = Environment(name, path)
+            envs[name] = env
         return envs
 
     def read_size(self):
@@ -101,13 +101,24 @@ class EnvironmentManager:
         if not self.exists(name):
             raise NameError(f"Environment `{name}` does not exists.")
 
+    @staticmethod
+    def norm_path(path):
+        path = os.path.normpath(path)
+        name = os.path.basename(path)
+        if name == path:  # just type a name   NO!!!! ./name
+            return os.path.join(config.venv_path, name), name
+        if os.path.isabs(path):
+            return path, name
+        return os.path.join(os.getcwd(), path), name
+
     # Operations to modify envs
 
     def create(self, name):
+        path, name = self.norm_path(name)
         self.check_not_exists(name)
-        path = os.path.join(config.venv_path, name)
         print(f"creating {name} in {path}...")
         self.shell.create_env(path)
+        config.add_venv(name, path)
         print(f"{name} created successfully.")
 
     def activate(self, name):
@@ -127,7 +138,7 @@ class EnvironmentManager:
             return
         self.show(envs=valid_names)
         confirm = input(
-            colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red")
+            colored(f"Sure to remove `{','.join(valid_names)}`? [y/N]", "red")
         )
         if confirm.lower() == "y":
             for name in valid_names:
@@ -152,7 +163,7 @@ class EnvironmentManager:
         self.check_exists(source)
         self.check_not_exists(target)
         self.show(envs=[source])
-        confirm = input(f"Sure to move venv `{source}` to `{target}`? (Y/N)")
+        confirm = input(f"Sure to move venv `{source}` to `{target}`? [y/N]")
         if confirm.lower() == "y":
             print("Start moving...")
             source_path = self._envs[source].path
