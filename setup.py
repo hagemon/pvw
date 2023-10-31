@@ -10,7 +10,7 @@ class PvwWrapperInstall(install):
         install.run(self)
 
     def wrapper_install(self):
-        print("wrap")
+        pass
 
 
 setup(cmdclass={"install": PvwWrapperInstall})

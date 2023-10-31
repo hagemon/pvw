@@ -14,9 +14,8 @@ class Config:
             path = self.ask_for_init()
             self.config = {"venv_path": path}
             try:
-                with open(self.config_path, "w") as f:
-                    json.dump(self.config, f)
-                    print(f"Create config file in {self.config_path}")
+                self.save()
+                print(f"Create config file in {self.config_path}")
             except Exception as e:
                 raise NameError(f"invalid venv path {path}.")
         else:
@@ -37,8 +36,7 @@ class Config:
     def set(self, key, value):
         if key in self.config:
             self.config[key] = value
-            with open(self.config_path, "w") as f:
-                json.dump(self.config, f)
+            self.save()
 
     def add_venv(self, name, path):
         self.config["venvs"].append(
@@ -47,14 +45,12 @@ class Config:
                 "path": path,
             }
         )
-        with open(self.config_path, "w") as f:
-            json.dump(self.config, f)
+        self.save()
 
     def remove_venv(self, names):
-        venvs = [info for info in self.config['venvs'] if info['name'] not in names]
-        self.config['venvs'] = venvs
-        with open(self.config_path, "w") as f:
-            json.dump(self.config, f)
+        venvs = [info for info in self.config["venvs"] if info["name"] not in names]
+        self.config["venvs"] = venvs
+        self.save()
 
     def check_venv_path(self):
         try:
@@ -70,10 +66,20 @@ class Config:
                             "path": os.path.join(path, env),
                         }
                     )
-                with open(self.config_path, "w") as f:
-                    json.dump(self.config, f)
+                self.save()
+            else:
+                venvs = self.config["venvs"]
+                updated_venvs = [env for env in venvs if os.path.exists(env["path"])]
+                if len(venvs) != len(updated_venvs):
+                    self.config["venvs"] = updated_venvs
+                    self.save()
+
         except Exception as e:
             print(e)
+
+    def save(self):
+        with open(self.config_path, "w") as f:
+            json.dump(self.config, f)
 
     @property
     def venv_path(self):

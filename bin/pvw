@@ -3,7 +3,7 @@
 PIPE_NAME="$HOME/.pvw/_envs._cfg"
 params=("$@")
 
-ops=("ls" "create" "activate" "rm" "cp" "mv" "config")
+ops=("ls" "create" "activate" "rm" "cp" "mv" "config" "init")
 
 if [ "$0" == "$BASH_SOURCE" ] && [ "$1" == "activate" ]; then
     echo "Use \`source pvw ENV_NAME\` or \`source pvw activate ENV_NAME\` to activate venv"

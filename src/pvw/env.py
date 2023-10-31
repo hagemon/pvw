@@ -138,7 +138,7 @@ class EnvironmentManager:
             return
         self.show(envs=valid_names)
         confirm = input(
-            colored(f"Sure to remove `{','.join(valid_names)}`? (Y/N)", "red")
+            colored(f"Sure to remove `{','.join(valid_names)}`? [y/N]", "red")
         )
         if confirm.lower() == "y":
             for name in valid_names:
@@ -163,7 +163,7 @@ class EnvironmentManager:
         self.check_exists(source)
         self.check_not_exists(target)
         self.show(envs=[source])
-        confirm = input(f"Sure to move venv `{source}` to `{target}`? (Y/N)")
+        confirm = input(f"Sure to move venv `{source}` to `{target}`? [y/N]")
         if confirm.lower() == "y":
             print("Start moving...")
             source_path = self._envs[source].path
