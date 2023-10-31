@@ -10,11 +10,7 @@ description = "a lightweight python venv wrapper to manage venvs"
 readme = "README.md"
 requires-python = ">=3.6"
 license = { text = "MIT" }
-<<<<<<< HEAD
-version = "0.0.4"
-=======
 version = "0.0.5"
->>>>>>> dev
 keywords = ["venv", "virtual env", "python"]
 classifiers = ["Programming Language :: Python :: 3"]
 dependencies = ['importlib-metadata; python_version>"3.6"', "termcolor", "click"]
