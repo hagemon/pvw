@@ -120,8 +120,6 @@ sudo make install
 ```
 The executable binary `pvw` and `pvw_py` will be installed in your /usr/bin/ directory.
 
-Note that `pyinstaller` and `termcolor` will also be installed.
-
 ### Using setuptools
 
 ```bash
