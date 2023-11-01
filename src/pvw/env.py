@@ -91,7 +91,7 @@ class EnvironmentManager:
         return self.shell.check_python_installation()
 
     def exists(self, name):
-        return name in self._envs
+        return os.path.basename(name) in self._envs
 
     def check_not_exists(self, name):
         if self.exists(name):
@@ -103,9 +103,12 @@ class EnvironmentManager:
 
     @staticmethod
     def norm_path(path):
+        if path.startswith("."):
+            path = os.path.join(os.getcwd(), os.path.normpath(path))
         path = os.path.normpath(path)
         name = os.path.basename(path)
-        if name == path:  # just type a name   NO!!!! ./name
+
+        if name == path:  # just type a name
             return os.path.join(config.venv_path, name), name
         if os.path.isabs(path):
             return path, name
