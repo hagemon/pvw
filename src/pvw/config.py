@@ -50,7 +50,7 @@ class Config:
     def remove_venv(self, names):
         venvs = [info for info in self.config["venvs"] if info["name"] not in names]
         self.config["venvs"] = venvs
-        self.save()
+        self.save()        
 
     def check_venv_path(self):
         try:

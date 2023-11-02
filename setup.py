@@ -1,6 +1,6 @@
 from setuptools import setup
-from setuptools.command.install import install
-import os
+# from setuptools.command.install import install
+# import os
 
 
 # class PvwWrapperInstall(install):
