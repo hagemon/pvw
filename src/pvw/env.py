@@ -67,7 +67,7 @@ class EnvironmentManager:
         else:
             header = ["Name", "Path"]
         if envs:
-            env_list = [self._envs[env].to_list() for env in envs if self.exists(env)]
+            env_list = [self._envs[env].to_list() for env in envs if self.name_exists(env)]
         else:
             env_list = [self._envs[name].to_list() for name in self._envs]
         col_widths = [
@@ -90,15 +90,21 @@ class EnvironmentManager:
     def check_python_installation(self):
         return self.shell.check_python_installation()
 
-    def exists(self, name):
-        return os.path.basename(name) in self._envs
+    def name_exists(self, name):
+        return name in self._envs
+
+    def path_exists(self, path):
+        return path in [self._envs[name].path for name in self._envs]
 
     def check_not_exists(self, name):
-        if self.exists(name):
+        path, name = self.norm_path(name)
+        if self.name_exists(name):
             raise NameError(f"Environment named `{name}` has already exists.")
+        if self.path_exists(path):
+            raise NameError(f"Path {path} has already exists.")
 
     def check_exists(self, name):
-        if not self.exists(name):
+        if not self.name_exists(name):
             raise NameError(f"Environment `{name}` does not exists.")
 
     @staticmethod
@@ -114,6 +120,10 @@ class EnvironmentManager:
             return path, name
         return os.path.join(os.getcwd(), path), name
 
+    @staticmethod
+    def split_path_name(path):
+        return os.path.dirname(path), os.path.basename(path)
+
     # Operations to modify envs
 
     def create(self, name):
@@ -126,7 +136,7 @@ class EnvironmentManager:
 
     def activate(self, name):
         self.check_exists(name)
-        path = os.path.join(config.venv_path, name)
+        path = self._envs[name].path
         self.shell.activate_env(path)
 
     def remove(self, names):
@@ -152,10 +162,15 @@ class EnvironmentManager:
     def copy(self, source, target):
         self.check_exists(source)
         self.check_not_exists(target)
+        path, name = self.split_path_name(target)
         print("Start copying...")
         source_path = self._envs[source].path
-        target_path = source_path.replace(source, target)
+        if path:
+            target_path = target
+        else:
+            target_path = os.path.join(config.venv_path, name)
         self.shell.copy_env(source_path, target_path)
+        config.add_venv(name, target_path)
         print(
             colored(
                 f"venv `{target}` has been successfully copied from `{source}`", "green"
@@ -168,11 +183,17 @@ class EnvironmentManager:
         self.show(envs=[source])
         confirm = input(f"Sure to move venv `{source}` to `{target}`? [y/N]")
         if confirm.lower() == "y":
+            path, name = self.split_path_name(target)
             print("Start moving...")
             source_path = self._envs[source].path
-            target_path = source_path.replace(source, target)
+            if path:
+                target_path = target
+            else:
+                target_path = os.path.join(config.venv_path, name)
             self.shell.copy_env(source_path, target_path)
             self.shell.remove_env(source_path)
+            config.add_venv(name, target_path)
+            config.remove_venv(names=[source])
             print(
                 colored(
                     f"venv `{target}` has been successfully moved from `{source}`",
