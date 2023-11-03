@@ -107,6 +107,8 @@ pvw mv dev foo  # rename `dev` to a new venv `foo`
 ```shell
 # remove both `dev` and `foo`
 pvw rm dev foo
+# remove envs that starts with `test`
+pvw rm test.*
 ```
 
 ## Build From Source

@@ -2,6 +2,7 @@ from pvw.config import config
 import os
 from pvw.shell_executor import ShellExecutor
 from termcolor import colored
+import re
 
 
 def _get_directory_size(path="."):
@@ -67,7 +68,9 @@ class EnvironmentManager:
         else:
             header = ["Name", "Path"]
         if envs:
-            env_list = [self._envs[env].to_list() for env in envs if self.name_exists(env)]
+            env_list = [
+                self._envs[env].to_list() for env in envs if self.name_exists(env)
+            ]
         else:
             env_list = [self._envs[name].to_list() for name in self._envs]
         col_widths = [
@@ -107,6 +110,10 @@ class EnvironmentManager:
         if not self.name_exists(name):
             raise NameError(f"Environment `{name}` does not exists.")
 
+    def match_exist_envs(self, pattern):
+        matches = [name for name in self._envs if re.findall(f"^{pattern}$", name)]
+        return matches
+
     @staticmethod
     def norm_path(path):
         if path.startswith("."):
@@ -143,8 +150,8 @@ class EnvironmentManager:
         valid_names = []
         for name in names:
             try:
-                self.check_exists(name)
-                valid_names.append(name)
+                matches = self.match_exist_envs(name)
+                valid_names.extend(matches)
             except NameError as e:
                 print(colored(e, "yellow"))
         if not valid_names:
