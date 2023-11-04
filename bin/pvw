@@ -3,9 +3,16 @@
 PIPE_NAME="$HOME/.pvw/_envs._cfg"
 params=("$@")
 
-# Support shorten command to activate venvs, e.g. source pvw env
-if [ "$0" != "$BASH_SOURCE" ] && [ "$1" != "activate" ]; then
-    params=("activate" "${params[@]}")
+ops=("ls" "create" "activate" "rm" "cp" "mv" "config" "init")
+
+if [[ "$0" == "$BASH_SOURCE" ]] && [[ "$1" == "activate" ]]; then
+    if [ -n "$2" ]; then
+        env_name=$2
+    else
+        env_name="ENV_NAME"
+    fi
+    echo -e "Use one of following commands to activate `${env_name}`:\n\033[32msource pvw ${env_name}\033[0m\n\033[32msource pvw activate ${env_name}\033[0m"
+    exit 1
 fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
@@ -14,11 +21,17 @@ else
   op="${params[0]}"
 fi
 
-if [ $# -gt 0 ]
+# Support shorten command to activate venvs, e.g. source pvw env
+if [[ "$0" != "$BASH_SOURCE" ]] && [[ "$op" != "activate" ]] && [[ ! "${ops[@]}" =~ "$op" ]]; then
+    params=("activate" "${params[@]}" "--shorten")
+    op="activate"
+fi
+
+if [[ $# -gt 0 ]]
 then
     # python -m cProfile -s time main.py "${params[@]}" # for evaluating execution time
     pvw-py "${params[@]}"
-    if [[ $op == "activate" ]] && [ -f "$PIPE_NAME" ]
+    if [[ $op == "activate" ]] && [[ -f "$PIPE_NAME" ]]
     then
         # activate parameter will create a _envs._cfg file as a pipe to make communication between parent/child process.
         ps1Path=$(cat "$PIPE_NAME")
