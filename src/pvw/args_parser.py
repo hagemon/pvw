@@ -43,11 +43,7 @@ def create(name):
 @click.argument("names", nargs=-1)
 def rm(names):
     """
-<<<<<<< HEAD
     remove existing venvs, you can pass mutiple names with regular expression.
-=======
-    remove an existing venv
->>>>>>> 7e50aab6fa78c983fa2913c5f40026ce440c5cc6
     """
     _env_manager.remove(names=names)
 
