@@ -6,8 +6,10 @@ import sys
 import logging
 
 
-def create_config_file():
-    pass
+ISOLATED_PATH = os.path.join(os.path.expanduser("~"), "isolated")
+if not os.path.exists(ISOLATED_PATH):
+    os.makedirs(ISOLATED_PATH)
+log = logging.getLogger("pvwTesting")
 
 
 class TestPvwCli(unittest.TestCase):
@@ -20,36 +22,13 @@ class TestPvwCli(unittest.TestCase):
         assert len(result1.output) > 0
         assert "Size" in result2.output
 
-    def test_ops_in_default_path(self):
+    def test_create_in_default_path(self):
         runner = CliRunner()
-        with runner.isolated_filesystem():
-            config_path = os.path.join(os.path.expanduser("~"), ".pvw", "config", "config.json")
-            log = logging.getLogger("pvwTesting")
-
-            result1 = runner.invoke(create, ["test_case_env_default"])
-            with open(os.path.join(config_path)) as f:
-                log.debug(f"config content: {f.readlines()}")
-            result2 = runner.invoke(
-                cp, ["test_case_env_default", "test_case_env_default_cp"]
-            )
-            result3 = runner.invoke(
-                mv, ["test_case_env_default_cp", "test_case_env_default_mv"]
-            )
-            result4 = runner.invoke(
-                rm, ["test_case_env_default", "test_case_env_default_mv"]
-            )
-    
-
-            # log.debug(f"config exists: {os.path.exists(config_path)}")
-            
-            log.debug(result1.exc_info())
-            log.debug(result2.exc_info())
-            log.debug(result3.exc_info())
-            log.debug(result4.exc_info())
-            # assert result1.exit_code == 0
-            assert result2.exit_code == 0
-            assert result3.exit_code == 0
-            assert result4.exit_code == 0
+        with runner.isolated_filesystem(ISOLATED_PATH):
+            result = runner.invoke(create, ["test_case_env_default"])
+            ls_result = runner.invoke(ls)
+            assert result.exit_code == 0
+            assert "test_case_env_default" in ls_result.output
 
     # def test_ops_in_current_path(self):
     #     runner = CliRunner()
