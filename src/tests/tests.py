@@ -5,11 +5,9 @@ import os
 import sys
 import logging
 
-
-ISOLATED_PATH = os.path.join(os.path.expanduser("~"), "isolated")
-if not os.path.exists(ISOLATED_PATH):
-    os.makedirs(ISOLATED_PATH)
+VENV_DEFAULT_PATH = os.path.join(os.path.expanduser("~"), "venvs")
 log = logging.getLogger("pvwTesting")
+PREFIX = "pvw_test_case"
 
 
 class TestPvwCli(unittest.TestCase):
@@ -22,60 +20,67 @@ class TestPvwCli(unittest.TestCase):
         assert len(result1.output) > 0
         assert "Size" in result2.output
 
-    def test_create_in_default_path(self):
+    def test_default_env(self):
         runner = CliRunner()
-        with runner.isolated_filesystem(ISOLATED_PATH):
-            result = runner.invoke(create, ["test_case_env_default"])
+        with runner.isolated_filesystem():
+            default_name = PREFIX + "_env_default"
+            create_result = runner.invoke(create, [default_name])
+            assert create_result.exit_code == 0
+            assert os.path.exists(os.path.join(VENV_DEFAULT_PATH, default_name))
+
+            cp_name = default_name + "_cp"
+            cp_result = runner.invoke(cp, [default_name, cp_name])
+            assert cp_result.exit_code == 0
+            assert os.path.exists(os.path.join(VENV_DEFAULT_PATH, cp_name))
+
+            mv_name = default_name + "_mv"
+            mv_result = runner.invoke(mv, [cp_name, mv_name], input="y")
+            assert mv_result.exit_code == 0
+            assert os.path.exists(os.path.join(VENV_DEFAULT_PATH, mv_name))
+            assert not os.path.exists(os.path.join(VENV_DEFAULT_PATH, cp_name))
+
+            rm_result = runner.invoke(rm, f'"{PREFIX}.*"', input="y")
             ls_result = runner.invoke(ls)
-            assert result.exit_code == 0
-            assert "test_case_env_default" in ls_result.output
+            assert rm_result.exit_code == 0
+            assert default_name not in ls_result.output
 
-    # def test_ops_in_current_path(self):
-    #     runner = CliRunner()
-    #     with runner.isolated_filesystem():
-    #         result1 = runner.invoke(create, ["./test_case_env_current"])
-    #         result2 = runner.invoke(
-    #             cp, ["test_case_env_current", "./test_case_env_current_cp"]
-    #         )
-    #         result3 = runner.invoke(
-    #             mv, ["test_case_env_current_cp", "./test_case_env_current_mv"]
-    #         )
-    #         result4 = runner.invoke(
-    #             rm, ["test_case_env_current", "./test_case_env_current_mv"]
-    #         )
-    #         assert result1.exit_code == 0
-    #         assert result2.exit_code == 0
-    #         assert result3.exit_code == 0
-    #         assert result4.exit_code == 0
+    def test_current_env(self):
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            current_name = PREFIX + "_env_current"
+            current_path = os.path.join(os.getcwd(), current_name)
+            create_result = runner.invoke(create, [current_path])
+            assert create_result.exit_code == 0
+            assert os.path.exists(current_path)
 
-    # def test_ops_in_specific_path(self):
-    #     runner = CliRunner()
-    #     with runner.isolated_filesystem():
-    #         tmp_dir_name = "pvw_test_tmp_dir"
-    #         path = os.path.join('./', tmp_dir_name)
-    #         runner = CliRunner()
-    #         result1 = runner.invoke(
-    #             create, [os.path.join(path, "test_case_env_specific")]
-    #         )
-    #         result2 = runner.invoke(
-    #             cp,
-    #             ["test_case_env_specific", os.path.join(path, "test_case_env_specific_cp")],
-    #         )
-    #         result3 = runner.invoke(
-    #             mv,
-    #             [
-    #                 "test_case_env_specific_cp",
-    #                 os.path.join(path, "test_case_env_specific_mv"),
-    #             ],
-    #         )
-    #         result4 = runner.invoke(
-    #             rm,
-    #             ["test_case_env_specific", "test_case_env_specific_mv"],
-    #         )
-    #         assert result1.exit_code == 0
-    #         assert result2.exit_code == 0
-    #         assert result3.exit_code == 0
-    #         assert result4.exit_code == 0
+            cp_name = current_name + "_cp"
+            cp_path = os.path.join(os.getcwd(), cp_name)
+            cp_result = runner.invoke(cp, [current_name, cp_path])
+            assert cp_result.exit_code == 0
+            assert os.path.exists(cp_path)
+
+            mv_name = current_name + "_mv"
+            mv_path = os.path.join(os.getcwd(), mv_name)
+            mv_result = runner.invoke(mv, [cp_name, mv_path], input="y")
+            assert mv_result.exit_code == 0
+            assert os.path.exists(mv_path)
+            assert not os.path.exists(cp_path)
+
+            rm_result = runner.invoke(rm, f'"{PREFIX}.*"', input="y")
+            ls_result = runner.invoke(ls)
+            assert rm_result.exit_code == 0
+            assert current_name not in ls_result.output
+
+    def test_init(self):
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            name = PREFIX + "_env_init"
+            path = os.path.join(os.getcwd(), name)
+            env_path = os.path.join(path, name)
+            init_result = runner.invoke(init, [name], input="y\n\n")
+            assert init_result.exit_code == 0
+            assert os.path.exists(path)
+            assert os.path.exists(env_path)
 
 
 if __name__ == "__main__":
