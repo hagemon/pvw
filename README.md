@@ -11,7 +11,21 @@ Based on the built-in venv since python 3.6.
 ## Pre-requirement
 
 - Python >= 3.6
-- python-venv
+- python3-venv
+
+**Important**: In Linux, you should firstly install python3-venv by using:
+
+```
+sudo apt install python3-venv
+```
+
+If you receive warning like ```/home/USERNAME/.local/bin is not in PATH```
+
+you should add 
+
+```export PATH=/home/USERNAME/local/bin:$PATH``` 
+
+in shell configuration file (e.g. `.bashrc`, `.zshrc`)
 
 ## Installation
 
